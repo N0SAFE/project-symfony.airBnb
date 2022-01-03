@@ -50,24 +50,26 @@ class Residence
     private $inventory_file;
 
     /**
+     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="residence")
+     */
+    private $rents;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
      */
-    private $owner_id;
+    private $owner;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="representative_id")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="representative")
      */
-    private $representative_id;
+    private $representative;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="residence_id")
-     */
-    private $residence_id;
-
+   
     public function __construct()
     {
         $this->representative_id = new ArrayCollection();
         $this->residence_id = new ArrayCollection();
+        $this->rents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,75 +149,59 @@ class Residence
         return $this;
     }
 
-    public function getOwnerId(): ?User
-    {
-        return $this->owner_id;
-    }
-
-    public function setOwnerId(?User $owner_id): self
-    {
-        $this->owner_id = $owner_id;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|User[]
-     */
-    public function getRepresentativeId(): Collection
-    {
-        return $this->representative_id;
-    }
-
-    public function addRepresentativeId(User $representativeId): self
-    {
-        if (!$this->representative_id->contains($representativeId)) {
-            $this->representative_id[] = $representativeId;
-            $representativeId->setRepresentativeId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRepresentativeId(User $representativeId): self
-    {
-        if ($this->representative_id->removeElement($representativeId)) {
-            // set the owning side to null (unless already changed)
-            if ($representativeId->getRepresentativeId() === $this) {
-                $representativeId->setRepresentativeId(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection|Rent[]
      */
-    public function getResidenceId(): Collection
+    public function getRents(): Collection
     {
-        return $this->residence_id;
+        return $this->rents;
     }
 
-    public function addResidenceId(Rent $residenceId): self
+    public function addRent(Rent $rent): self
     {
-        if (!$this->residence_id->contains($residenceId)) {
-            $this->residence_id[] = $residenceId;
-            $residenceId->setResidenceId($this);
+        if (!$this->rents->contains($rent)) {
+            $this->rents[] = $rent;
+            $rent->setResidence($this);
         }
 
         return $this;
     }
 
-    public function removeResidenceId(Rent $residenceId): self
+    public function removeRent(Rent $rent): self
     {
-        if ($this->residence_id->removeElement($residenceId)) {
+        if ($this->rents->removeElement($rent)) {
             // set the owning side to null (unless already changed)
-            if ($residenceId->getResidenceId() === $this) {
-                $residenceId->setResidenceId(null);
+            if ($rent->getResidence() === $this) {
+                $rent->setResidence(null);
             }
         }
 
         return $this;
     }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getRepresentative(): ?User
+    {
+        return $this->representative;
+    }
+
+    public function setRepresentative(?User $representative): self
+    {
+        $this->representative = $representative;
+
+        return $this;
+    }
+
+   
 }

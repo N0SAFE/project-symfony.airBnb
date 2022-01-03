@@ -63,15 +63,18 @@ class Rent
     private $representative_validate_at;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tenant_id")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="rents")
      */
-    private $tenant_id;
+    private $tenant;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Residence::class, inversedBy="residence_id")
+     * @ORM\ManyToOne(targetEntity=Residence::class, inversedBy="rents")
      */
-    private $residence_id;
+    private $residence;
 
+    
+
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -185,27 +188,31 @@ class Rent
         return $this;
     }
 
-    public function getTenantId(): ?User
+    public function getTenant(): ?User
     {
-        return $this->tenant_id;
+        return $this->tenant;
     }
 
-    public function setTenantId(?User $tenant_id): self
+    public function setTenant(?User $tenant): self
     {
-        $this->tenant_id = $tenant_id;
+        $this->tenant = $tenant;
 
         return $this;
     }
 
-    public function getResidenceId(): ?Residence
+    public function getResidence(): ?Residence
     {
-        return $this->residence_id;
+        return $this->residence;
     }
 
-    public function setResidenceId(?Residence $residence_id): self
+    public function setResidence(?Residence $residence): self
     {
-        $this->residence_id = $residence_id;
+        $this->residence = $residence;
 
         return $this;
     }
+
+    
+
+
 }

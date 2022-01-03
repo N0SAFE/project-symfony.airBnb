@@ -40,24 +40,30 @@ class User
     private $is_verified;
 
     /**
-     * @ORM\OneToMany(targetEntity=Residence::class, mappedBy="owner_id")
+     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="tenant")
+     */
+    private $rents;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Residence::class, mappedBy="owner")
      */
     private $residences;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Residence::class, inversedBy="representative_id")
+     * @ORM\OneToMany(targetEntity=Residence::class, mappedBy="representative")
      */
-    private $representative_id;
+    private $representative;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="tenant_id")
-     */
-    private $tenant_id;
+   
+
+   
 
     public function __construct()
     {
         $this->residences = new ArrayCollection();
         $this->tenant_id = new ArrayCollection();
+        $this->rents = new ArrayCollection();
+        $this->representative = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +120,36 @@ class User
     }
 
     /**
+     * @return Collection|Rent[]
+     */
+    public function getRents(): Collection
+    {
+        return $this->rents;
+    }
+
+    public function addRent(Rent $rent): self
+    {
+        if (!$this->rents->contains($rent)) {
+            $this->rents[] = $rent;
+            $rent->setTenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRent(Rent $rent): self
+    {
+        if ($this->rents->removeElement($rent)) {
+            // set the owning side to null (unless already changed)
+            if ($rent->getTenant() === $this) {
+                $rent->setTenant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|Residence[]
      */
     public function getResidences(): Collection
@@ -125,7 +161,7 @@ class User
     {
         if (!$this->residences->contains($residence)) {
             $this->residences[] = $residence;
-            $residence->setOwnerId($this);
+            $residence->setOwner($this);
         }
 
         return $this;
@@ -135,53 +171,45 @@ class User
     {
         if ($this->residences->removeElement($residence)) {
             // set the owning side to null (unless already changed)
-            if ($residence->getOwnerId() === $this) {
-                $residence->setOwnerId(null);
+            if ($residence->getOwner() === $this) {
+                $residence->setOwner(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getRepresentativeId(): ?Residence
-    {
-        return $this->representative_id;
-    }
-
-    public function setRepresentativeId(?Residence $representative_id): self
-    {
-        $this->representative_id = $representative_id;
 
         return $this;
     }
 
     /**
-     * @return Collection|Rent[]
+     * @return Collection|Residence[]
      */
-    public function getTenantId(): Collection
+    public function getRepresentative(): Collection
     {
-        return $this->tenant_id;
+        return $this->representative;
     }
 
-    public function addTenantId(Rent $tenantId): self
+    public function addRepresentative(Residence $representative): self
     {
-        if (!$this->tenant_id->contains($tenantId)) {
-            $this->tenant_id[] = $tenantId;
-            $tenantId->setTenantId($this);
+        if (!$this->representative->contains($representative)) {
+            $this->representative[] = $representative;
+            $representative->setRepresentative($this);
         }
 
         return $this;
     }
 
-    public function removeTenantId(Rent $tenantId): self
+    public function removeRepresentative(Residence $representative): self
     {
-        if ($this->tenant_id->removeElement($tenantId)) {
+        if ($this->representative->removeElement($representative)) {
             // set the owning side to null (unless already changed)
-            if ($tenantId->getTenantId() === $this) {
-                $tenantId->setTenantId(null);
+            if ($representative->getRepresentative() === $this) {
+                $representative->setRepresentative(null);
             }
         }
 
         return $this;
     }
+
+   
+
+   
 }

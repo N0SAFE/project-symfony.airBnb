@@ -1,0 +1,115 @@
+{
+    "customeVerifivation": {
+        "args": ["type", "value", "rule"],
+        "verification": [{
+            "name": "require",
+            "verification": "verify if the arg is not empty"
+        }, {
+            "name": "minLength",
+            "verification": "verify if the arg length as less of 3 index",
+            "rule": "rule.minLength"
+        }, {
+            "name": "maxLength",
+            "verification": "verify if the arg length as more of 20 index",
+            "rule": "rule.maxLength = 20"
+        }]
+    },
+    "regexVerification": {
+        "args": ["type", "value"],
+        "verification": [{
+            "type": "email",
+            "describ": "verify if the value is an email"
+        }, {
+            "type": "phone",
+            "describ": "verify if the value is a phone number"
+        }, {
+            "type": "password",
+            "describ": "verify if the value is a password"
+        }, {
+            "type": "name",
+            "describ": "verify if the value is a name"
+        }, {
+            "type": "zip",
+            "describ": "verify if the value is a zip code"
+        }, {
+            "type": "number",
+            "describ": "verify if the value is a number"
+        }, {
+            "type": "date",
+            "describ": "verify if the value is a date"
+        }, {
+            "type": "time",
+            "describ": "verify if the value is a time"
+        }, {
+            "type": "dateTime",
+            "describ": "verify if the value is a date time"
+        }, {
+            "type": "ip",
+            "describ": "verify if the value is a ip"
+        }, {
+            "type": "ipv6",
+            "describ": "verify if the value is a ipv6"
+        }, {
+            "type": "color",
+            "describ": "verify if the value is a color"
+        }, {
+            "type": "hex",
+            "describ": "verify if the value is a hex color"
+        }, {
+            "type": "rgb",
+            "describ": "verify if the value is a rgb color"
+        }, {
+            "type": "rgba",
+            "describ": "verify if the value is a rgba color"
+        }, {
+            "type": "hsl",
+            "describ": "verify if the value is a hsl color"
+        }, {
+            "type": "hsla",
+            "describ": "verify if the value is a hsla color"
+        }, {
+            "type": "creditcard",
+            "describ": "verify if the value is a credit card"
+        }, {
+            "type": "isbn",
+            "describ": "verify if the value is a isbn"
+        }, {
+            "type": "isbn10",
+            "describ": "verify if the value is a isbn10"
+        }, {
+            "type": "isbn13",
+            "describ": "verify if the value is a isbn13"
+        }, {
+            "type": "uuid",
+            "describ": "verify if the value is a uuid"
+        }, {
+            "type": "base64",
+            "describ": "verify if the value is a base64"
+        }, {
+            "type": "base64url",
+            "describ": "verify if the value is a base64url"
+        }, {
+            "type": "dataUri",
+            "describ": "verify if the value is a dataUri"
+        }, {
+            "type": "latitude",
+            "describ": "verify if the value is a latitude"
+        }, {
+            "type": "longitude",
+            "describ": "verify if the value is a longitude"
+        }, {
+            "type": "postalCode",
+            "describ": "verify if the value is a postal code"
+        }]
+    },
+    "typeVerification": {
+        "args": ["type", "value"],
+        "verification": [{
+            "type": "array",
+            "describ": "verify if the value is a array instance"
+        }, {
+            "name": "object",
+            "descib": "verify if the value is a object instance"
+        }]
+    }
+}

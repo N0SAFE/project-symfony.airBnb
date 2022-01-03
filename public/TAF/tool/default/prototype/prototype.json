@@ -1,0 +1,60 @@
+{
+    "array": {},
+    "bool": {},
+    "date": {},
+    "document": {},
+    "dom": {},
+    "function": {},
+    "HTMLCollection": {},
+    "HTMLElement": {},
+    "number": {
+        "parse": {
+            "describ": "a function that can parse a number to other type",
+            "args": [{
+                "name": "type",
+                "possibleArgs": ["<string>:{'string', 'int', 'bool', 'array', 'object'}"]
+            }],
+            "return": "a new object of the type of the argument name",
+            "error": "return the current int object"
+        }
+    },
+    "object": {
+        "add": {
+            "describ": "a function that add a value to a specific key in the current object",
+            "args": [{
+                "name": "key",
+                "possibleArgs": ["<string>"]
+            }, {
+                "name": "value",
+                "possibleArgs": ["<any>"]
+            }, {
+                "name": "force",
+                "possibleArgs": ["<boolean>"]
+            }],
+            "return": "if force = true return true else if the key not exist return true else return false",
+            "error": null
+        },
+        "del": {
+            "describ": "a function that delete a value to a specific key in the current object",
+            "args": [{
+                "name": "key",
+                "possibleArgs": ["<string>"]
+            }],
+            "return": "if the key not exist return false else return true",
+            "error": null
+        },
+        "linearPath": {
+            "describ": "a function that set value on object from a path",
+            "args": [{
+                "name": "suit",
+                "possibleArgs": ["<Array<string>>"]
+            }, { "name": "value", "possibleArgs": ["<any>"] }],
+            "return": "return the object",
+            "error": null
+        }
+    },
+    "regExp": {},
+    "string": {},
+    "symbol": {},
+    "window": {}
+}

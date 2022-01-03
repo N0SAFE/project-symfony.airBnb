@@ -67,8 +67,7 @@ class Residence
    
     public function __construct()
     {
-        $this->representative_id = new ArrayCollection();
-        $this->residence_id = new ArrayCollection();
+        
         $this->rents = new ArrayCollection();
     }
 

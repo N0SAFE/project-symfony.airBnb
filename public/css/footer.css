@@ -1,0 +1,25 @@
+#footerText {
+	display: flex;
+	background-color: rgba(0, 0, 0, 0.9);
+	padding: 50px;
+}
+
+li {
+	margin-left: 60px;
+	margin-right: 190px;
+}
+
+.footerText {
+	color: white;
+	list-style:	none;
+	margin-bottom: 15px;
+}
+
+.contact {
+	color: grey;
+	list-style: none;
+}
+
+.footerDiv {
+	width: 50%;
+}

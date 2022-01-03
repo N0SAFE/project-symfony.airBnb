@@ -6,6 +6,7 @@ kernel:
     resource: ../src/Kernel.php
     type: annotation
 
-login:
-    path: /login
-    controller: App\Controller\LoginController::index
+index:
+    path: /
+    methods: ["GET"]
+    controller: App\Controller\DefaultController::index

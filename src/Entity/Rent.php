@@ -43,7 +43,7 @@ class Rent
     private $tenant_signature;
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="datetime", length=45)
      */
     private $tenant_validate_at;
 
@@ -140,12 +140,12 @@ class Rent
         return $this;
     }
 
-    public function getTenantValidateAt(): ?string
+    public function getTenantValidateAt(): ?\DateTime
     {
         return $this->tenant_validate_at;
     }
 
-    public function setTenantValidateAt(string $tenant_validate_at): self
+    public function setTenantValidateAt(\DateTime $tenant_validate_at): self
     {
         $this->tenant_validate_at = $tenant_validate_at;
 

@@ -1,0 +1,17 @@
+[pqftkUOnCdtOsDRafRfmdAOKTqXvIQ="popUp"] {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100vw;
+    top: 0;
+    left: 0;
+}
+
+[pqftkUOnCdtOsDRafRfmdAOKTqXvIQ="header"] {
+    display: flex;
+    background: blue;
+}
+
+[pqftkUOnCdtOsDRafRfmdAOKTqXvIQ="content"] {
+    background: darkblue;
+}

@@ -5,3 +5,32 @@ controllers:
 kernel:
     resource: ../src/Kernel.php
     type: annotation
+
+
+login:  
+    path: /
+    methods: [ "GET" ]
+    controller: App\Controller\ConnexionController::loginIndex
+
+login_process:
+    path: /login/process
+    methods: [ "POST" ]
+    controller: App\Controller\ConnexionController::loginProcess
+
+
+
+register:
+    path: /register
+    methods: [ "GET" ]
+    controller: App\Controller\ConnexionController::registerIndex
+
+register_process:
+    path: /register/process
+    methods: [ "POST" ]
+    controller: App\Controller\ConnexionController::registerProcess
+
+
+profil: 
+    path: /profil
+    methods: [ "GET" ]
+    controller: App\Controller\ProfileController::index

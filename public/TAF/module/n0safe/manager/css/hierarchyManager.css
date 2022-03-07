@@ -1,0 +1,58 @@
+.hierarchy-container[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    display: flex;
+    flex-direction: column;
+}
+
+[container][taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    position: relative;
+}
+
+[container][taf-token="ISFdqZ1gRzfOPqwc3wqC"]::after {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: #9b9b9b;
+}
+
+.line[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    display: flex;
+    flex-direction: column;
+}
+
+input[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+.name[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    position: relative;
+}
+
+input:not(:checked)[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+.name[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+div[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    display: none;
+}
+
+input[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+.name[taf-token="ISFdqZ1gRzfOPqwc3wqC"]>label:first-child[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    cursor: pointer;
+    position: absolute;
+    left: -15px;
+}
+
+label:last-child:hover[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    cursor: pointer;
+    background: #505050;
+}
+
+input[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+.name[taf-token="ISFdqZ1gRzfOPqwc3wqC"]>label:first-child[taf-token="ISFdqZ1gRzfOPqwc3wqC"]>i[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    transition: all 0.2s ease-in-out;
+}
+
+input:checked[taf-token="ISFdqZ1gRzfOPqwc3wqC"]+.name[taf-token="ISFdqZ1gRzfOPqwc3wqC"]>label:first-child[taf-token="ISFdqZ1gRzfOPqwc3wqC"]>i[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    transform: rotate(90deg);
+}
+
+input[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    display: none;
+}
+
+.line[taf-token="ISFdqZ1gRzfOPqwc3wqC"] {
+    padding-left: 20px;
+}

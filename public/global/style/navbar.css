@@ -1,0 +1,36 @@
+.navbar-container {
+    padding: 30px 60px 30px 60px;
+    background: #9f5540;
+}
+
+#navbar-icon {
+    height: 50px;
+    width: 100px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#navbar-icon {
+    margin-right: 2em;
+}
+
+.navbar-nav li {
+    padding: 0 2em 0 2em;
+}
+
+.navbar-nav li a {
+    font-size: 1.4em;
+    text-decoration: underline;
+}
+
+.navbar .navbar-collapse {
+    background: #9f5540;
+    border-radius: 0 0 25px 25px;
+}
+
+.navbar .navbar-collapse.show,
+.navbar .navbar-collapse.collapsing {
+    margin-top: 40px;
+}

@@ -1,0 +1,102 @@
+{
+    "module": {
+        "n0safe": {
+            "compiler/css": {
+                "path": "./compiler/cssCompiler.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-compiler"
+            },
+            "manager/element": {
+                "path": "./manager/elementManager.js",
+                "sort": "n0safe-manager"
+            },
+            "manager/cookie": {
+                "path": "./manager/cookieManager.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-manager"
+            },
+            "manager/hierarchy": {
+                "path": "./manager/hierarchyManager.js",
+                "sort": "n0safe-manager",
+                "styles": ["manager/css/hierarchyManager.css", "|default.css"],
+                "src": "font-awesome~~6.0.0-beta3~~all~~css",
+                "require": [{ "script": "n0safe/manager/element", "use": "creator" }, { "script": "prototype/string", "use": "capitalize" }]
+            },
+            "manager/form": {
+                "path": "./manager/formManager.js",
+                "sort": "n0safe-manager"
+            },
+            "manager/popUp": {
+                "path": "./manager/popUpManager.js",
+                "sort": "n0safe-manager",
+                "styles": ["manager/css/popUpManager.css", "|default.css"],
+                "require": [{ "script": "n0safe/manager/element", "use": "creator" }]
+            },
+            "manager/window": {
+                "path": "./manager/windowManager.js",
+                "sort": "n0safe-manager"
+            },
+            "url/parser": {
+                "path": "./url/UrlParamParser.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-url"
+            },
+            "unique/id": {
+                "path": "./unique/Id.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-unique",
+                "require": [{ "script": "n0safe/__unique/super__", "use": ["default"] }]
+            },
+            "unique/uuid": {
+                "path": "./unique/Uuid.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-unique",
+                "require": [{ "script": "n0safe/__unique/super__", "use": ["default"] }]
+            },
+            "__unique/super__": {
+                "path": "./unique/Super.js",
+                "iniFunc": null,
+                "args": null,
+                "sort": "n0safe-unique"
+            },
+            "dom/magneticScroll": {
+                "env": "dev",
+                "path": "./dom/MagneticScroll.js",
+                "sort": "n0safe-dom"
+            },
+            "console/color": {
+                "path": "./console/color.js",
+                "sort": "n0safe-console"
+            },
+            "console/dynamic": {
+                "path": "./console/dynamic.js",
+                "sort": "n0safe-console"
+            },
+            "console/error": {
+                "path": "./console/error.js",
+                "require": [{ "script": "n0safe/console/prettyError", "use": ["default"] }],
+                "sort": "n0safe-console"
+            },
+            "console/prettyError": {
+                "path": "./console/prettyError.js",
+                "sort": "n0safe-console"
+            }
+        },
+        "db": {
+            "mime-type": {
+                "path": "./mime-type/index.js",
+                "iniFunc": "set",
+                "args": null,
+                "sort": "db"
+            }
+        }
+    },
+    "tool": {
+
+    }
+}

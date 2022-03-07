@@ -1,0 +1,55 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar = "login" %}
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="login/style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container">
+		<h1>Connectez-vous</h1>
+		<form action="{{ path('login_process') }}" method="post">
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input type="email" class="form-control" id="email" name="email" placeholder="Email">
+			</div>
+			<div class="form-group">
+				<label for="password">Mot de passe</label>
+				<input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe">
+			</div>
+			<button type="submit" class="btn btn-primary">Se connecter</button>
+		</form>
+		<span id="error-message"></span>
+	</div>
+	{% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script type="module" src="login/index.js"></script>
+{% endblock %}
+{# end js #}
+

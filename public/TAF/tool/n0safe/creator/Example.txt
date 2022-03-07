@@ -1,0 +1,64 @@
+elmtCreator default:
+
+let sort = elementCreator([
+    "div",
+    { class: "test" },
+    [
+        [
+            "p",
+            { id: "other" },
+            []
+        ],
+        [
+            "img",
+            { src: "other" },
+            []
+        ],
+        elementCreator([
+            "div",
+            { class: "test" }
+        ])
+    ]
+])
+
+
+
+params : 
+[
+    "div",
+    {
+        class: "test",
+    },
+    [
+        [
+            "p",
+            {
+                id: "other",
+            },
+            []
+        ],
+        [
+            "img",
+            {
+                src: "",
+            },
+            []
+        ]
+    ]
+]
+[
+    "div",
+    { class: "test" },
+    [
+        [
+            "p",
+            { id: "other" },
+            []
+        ],
+        [
+            "img",
+            { src: "test" },
+            []
+        ]
+    ]
+]

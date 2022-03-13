@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Residence;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,24 @@ class ResidenceRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Residence::class);
+    }
+
+    public function findByOwner(User $user): array {
+        return $this->createQueryBuilder("r")
+            ->addSelect("u")
+            ->join("r.owner", "u")
+            ->andWhere($user->getId()."=u.id")
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByRepresentative(User $user): array {
+        return $this->createQueryBuilder("r")
+            ->addSelect("u")
+            ->join("r.representative", "u")
+            ->andWhere($user->getId() . "=u.id")
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

@@ -22,6 +22,9 @@
 
 .navbar-nav li a {
     font-size: 1.4em;
+}
+
+.navbar-nav li a.active {
     text-decoration: underline;
 }
 

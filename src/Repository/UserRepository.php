@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Entity\Residence;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -18,10 +19,11 @@ use App\Service\HashService;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry, HashService $hashService)
+    public function __construct(ManagerRegistry $registry, HashService $hashService, ManagerRegistry $doctrine)
     {
         parent::__construct($registry, User::class);
         $this->hashService = $hashService;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -44,6 +46,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $user;
         }
         return null;
+    }
+
+    public function delete(User $user){
+        $em = $this->doctrine->getManager();
+        
+        $em->remove($user);
+        $em->flush();
     }
 
     // /**

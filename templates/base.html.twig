@@ -1,13 +1,20 @@
-{% block default_var %}
-	{% include "baseVar.html.twig" %}
-{% endblock %}
+{% if login is not defined %}
+	{% set login = false %}
+{% endif %}
+{% if navbar_active is not defined %}
+	{% set navbar_active = false %}
+{% endif %}
+{% if role is not defined %}
+	{% set role = false %}
+{% endif %}
+
 
 <!DOCTYPE html>
 <html>
 	<head>
 		<script type="module">
 			import ini from "/TAF/ini/ini.js";
-window.setBuild = ini;
+			window.setBuild = ini;
 		</script>
 		{% block head %}
 			{% if noCache is defined %}

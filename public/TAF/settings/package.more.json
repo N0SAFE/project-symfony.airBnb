@@ -38,6 +38,11 @@
                 "path": "./manager/windowManager.js",
                 "sort": "n0safe-manager"
             },
+            "manager/video": {
+                "path": "./manager/videoManager.js",
+                "sort": "n0safe-manager",
+                "require": [{ "script": "n0safe/manager/element", "use": ["creator"] }]
+            },
             "url/parser": {
                 "path": "./url/UrlParamParser.js",
                 "iniFunc": null,
@@ -92,6 +97,10 @@
                 "path": "./mime-type/index.js",
                 "iniFunc": "set",
                 "args": null,
+                "sort": "db"
+            },
+            "randomData": {
+                "path": "./randomData/index.js",
                 "sort": "db"
             }
         }

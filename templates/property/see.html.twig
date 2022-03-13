@@ -1,0 +1,126 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar_active = "biens" %}
+
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="/global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="/property/index.style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container d-flex justify-content-center align-items-center">
+		<div class="d-flex" style="gap: 10px;">
+			<div style="width: 500px;">
+				<img style="aspect-ratio: 18/9; width: 100%; object-fit: cover;" src="{{ residence.photoFile }}">
+				<div class="d-flex flex-row" style="height: 300px;">
+					<div class="d-flex flex-column h-100 justify-content-around">
+						<span>Nom de la residence</span>
+						<span>Adresse</span>
+						<span>Code postal</span>
+						<span>Pays</span>
+						<span>Gabarit inventaire</span>
+						<span>Photo</span>
+					</div>
+					<div class="d-flex flex-column h-100 justify-content-around align-items-center" style="width: 350px;">
+						<div style="width: 90%;">
+							<div class="input-group mb-1">
+								<input type="text" class="form-control" placeholder="name" aria-label="name" value="{{ residence.name }}">
+							</div>
+						</div>
+						<div style="width: 90%;">
+							<div class="input-group mb-1">
+								<input type="text" class="form-control" placeholder="address" aria-label="address" value="{{ residence.address }}">
+							</div>
+						</div>
+						<div style="width: 90%; gap: 10px;" class="d-flex justify-content-center align-items-center">
+							<div class="input-group mb-1">
+								<input type="text" class="form-control" placeholder="zip-code" aria-label="zip-code" value="{{ residence.zipCode }}">
+							</div>
+							<span>Ville</span>
+							<div class="input-group mb-1">
+								<input type="text" class="form-control" placeholder="city" aria-label="city" value="{{ residence.city }}">
+							</div>
+						</div>
+						<div style="width: 90%;">
+							<div class="input-group mb-1">
+								<input type="text" class="form-control" placeholder="country" aria-label="country" value="{{ residence.country }}">
+							</div>
+						</div>
+						<div style="width: 90%;">
+							<div class="input-group mb-1">
+								<input type="file" class="form-control" value="Résidence Saint-Vincent">
+							</div>
+						</div>
+						<div style="width: 90%;">
+							<div class="input-group mb-1">
+								<input type="file" class="form-control"value="Résidence Saint-Vincent">
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<button class="btn btn-success">Mettre a jour les données</button>
+			</div>
+			<div>
+				<h1>Résidence Saint-Vincent</h1>
+				<div class="d-flex" style="gap: 20px;">
+					<button class="btn btn-secondary" disabled>disponible a la location</button>
+					<button class="btn btn-success">ajouter une location</button>
+				</div>
+				<span class="container"><b>3</b> Locations</span>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">First</th>
+							<th scope="col">Last</th>
+							<th scope="col">Handle</th>
+							<th scope="col">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for rent in rents %}
+							<tr>
+								<th scope="row">{{ loop.index }}</th>
+								<td>{{ rent.arrivalDate|date("m/d/Y") }}</td>
+								<td>{{ rent.departureDate|date("m/d/Y") }}</td>
+								<td>{{ rent.tenant.firstName }}</td>
+								<td><a class="btn" style="background: #9f5540; color: white;">acceder</a></td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+    </div>
+    {% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	{# <script type="module" src="login/index.js"></script> #}
+{% endblock %}
+{# end js #}
+

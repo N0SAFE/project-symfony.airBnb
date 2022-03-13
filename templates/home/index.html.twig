@@ -1,9 +1,7 @@
 {% extends "base.html.twig" %}
 
-{% block default_var %}{% endblock %}
 
-
-{% set login = true %}
+{% set navbar_active = "home" %}
 
 {# head #}
 {% block title %}
@@ -22,24 +20,19 @@
 {% block preload_js %}{% endblock %}
 {# end head #}
 
-
 {# body #}
 {% block body %}
 	{% include "global/navbar.html.twig" %}
 	<div class="container">
-		<h1>Connectez-vous</h1>
-		<form action="{{ path('login_process') }}" method="post">
-			<div class="form-group">
-				<label for="email">Email</label>
-				<input type="email" class="form-control" id="email" name="email" placeholder="Email">
-			</div>
-			<div class="form-group">
-				<label for="password">Mot de passe</label>
-				<input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe">
-			</div>
-			<button type="submit" class="btn btn-primary">Se connecter</button>
-		</form>
-		<span class="text-danger" id="error-message"></span>
+		<h1>{{user.firstname}} {{user.lastname}}</h1>
+		<p>Vous êtes inscrit en tant que <b>{{user.stringRole}}</b> sur la plateforme</p>
+		<h2>Actions :</h2>
+		<br>
+		<a>> Afficher mes locations</a>
+		<br>
+		<a href="/delete">> Supprimer mon compte</a>
+		<br>
+		<a href="/logout">> logout</a>
 	</div>
 	{% include "global/footer.html.twig" %}
 {% endblock %}
@@ -49,7 +42,7 @@
 {# js #}
 {% block javascripts %}
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-	<script type="module" src="login/index.js"></script>
+	{# <script type="module" src="home/index.js"></script> #}
 {% endblock %}
 {# end js #}
 

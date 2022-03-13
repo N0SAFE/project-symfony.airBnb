@@ -7,16 +7,25 @@ kernel:
     type: annotation
 
 
-
-login:  
+home:
     path: /
     methods: [ "GET" ]
-    controller: App\Controller\ConnexionController::loginIndex
+    controller: App\Controller\HomeController::index
+
+login:
+    path: /login
+    methods: [ "GET" ]
+    controller: App\Controller\ConnexionController::index
 
 login_process:
     path: /login/process
-    methods: [ "POST" ]
+    methods: [ "POST" , "GET" ]
     controller: App\Controller\ConnexionController::loginProcess
+
+logout: 
+    path: /logout
+    methods: [ "GET" ]
+    controller: App\Controller\ConnexionController::logout
 
 
 
@@ -31,7 +40,40 @@ register_process:
     controller: App\Controller\ConnexionController::registerProcess
 
 
-profil: 
-    path: /profil
+
+delete:
+    path: /delete
     methods: [ "GET" ]
-    controller: App\Controller\ProfileController::index
+    controller: App\Controller\ConnexionController::delete
+
+delete_process:
+    path: /delete/proccess
+    methods: [ "POST" , "GET" ]
+    controller: App\Controller\ConnexionController::deleteProccess
+
+
+
+# tempController
+getHashedPassword:
+    path: /get/password
+    methods: ["GET"]
+    controller: App\Controller\ConnexionController::generatePassword
+
+
+
+property_list_owner:
+    path: /property
+    methods: ["GET"]
+    controller: App\Controller\PropertyController::list
+
+see_property:
+    path: /property/{id}
+    methods: ["GET"]
+    controller: App\Controller\PropertyController::see
+    requirements:
+        id: '\d+'
+
+add_property:
+    path: /property/add
+    methods: [ "GET" ]
+    controller: App\Controller\PropertyController::add

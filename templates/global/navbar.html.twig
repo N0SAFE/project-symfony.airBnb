@@ -1,21 +1,41 @@
-{% if navbar == "login" %}
-    <header class="navbar-container">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <div id="navbar-icon">
-                    <span>logo</span>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                    </ul>
-                </div>
+
+
+{% macro displayContent(navbar_active, role) %}
+    <li class="nav-item">
+        <a class="nav-link {% if navbar_active == "home" %}active{% endif %}" aria-current="page" href="/">HOME</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if navbar_active == "biens" %}active{% endif %}" aria-current="page" href="/property?page=1">BIENS</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if navbar_active == "locataires" %}active{% endif %}" aria-current="page" href="#">LOCATAIRES</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if navbar_active == "mandataires" %}active{% endif %}" aria-current="page" href="#">MANDATAIRES</a>
+    </li>
+{% endmacro %}
+
+<header class="navbar-container">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <div id="navbar-icon">
+                <span>logo</span>
             </div>
-        </nav>
-    </header>
-{% endif %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if login == true %}
+                        {% if role != "undefined" %}
+                            {{ _self.displayContent(navbar_active, role) }}
+                        {% endif %}
+                    {% endif %}
+                    {% if login == false %}
+                        {{ _self.displayContent(navbar_active, role) }}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

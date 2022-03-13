@@ -192,7 +192,7 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
     // #region load scriptLoader
 
     // ! prototype/modifier must be load in first and with scriptLoader.load and not .loads (tthe asyncForEach is used in scriptLoader.loads function)
-    window.TAF.module.prototypeModifier = await scriptLoader.load("prototype/modifier")
+    window.TAF.module.prototypeModifier = await scriptLoader.loadAndCall("prototype/modifier", "default")
     window.TAF.module.error = await scriptLoader.load("n0safe/console/error")
     await scriptLoader.load("ajax")
     await scriptLoader.load("loader/scriptLoader")

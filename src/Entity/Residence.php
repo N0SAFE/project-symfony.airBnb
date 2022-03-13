@@ -53,18 +53,23 @@ class Residence
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $owner_id;
+    private $owner;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $representative_id;
+    private $representative;
 
     /**
      * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="residence_id")
      */
     private $rents;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $photo_file;
 
     public function __construct()
     {
@@ -148,26 +153,26 @@ class Residence
         return $this;
     }
 
-    public function getOwnerId(): ?User
+    public function getOwner(): ?User
     {
-        return $this->owner_id;
+        return $this->owner;
     }
 
-    public function setOwnerId(?User $owner_id): self
+    public function setOwner(?User $owner): self
     {
-        $this->owner_id = $owner_id;
+        $this->owner = $owner;
 
         return $this;
     }
 
-    public function getRepresentativeId(): ?User
+    public function getRepresentative(): ?User
     {
-        return $this->representative_id;
+        return $this->representative;
     }
 
-    public function setRepresentativeId(?User $representative_id): self
+    public function setRepresentative(?User $representative): self
     {
-        $this->representative_id = $representative_id;
+        $this->representative = $representative;
 
         return $this;
     }
@@ -184,7 +189,7 @@ class Residence
     {
         if (!$this->rents->contains($rent)) {
             $this->rents[] = $rent;
-            $rent->setResidenceId($this);
+            $rent->setResidence($this);
         }
 
         return $this;
@@ -194,10 +199,22 @@ class Residence
     {
         if ($this->rents->removeElement($rent)) {
             // set the owning side to null (unless already changed)
-            if ($rent->getResidenceId() === $this) {
-                $rent->setResidenceId(null);
+            if ($rent->getResidence() === $this) {
+                $rent->setResidence(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPhotoFile(): ?string
+    {
+        return $this->photo_file;
+    }
+
+    public function setPhotoFile(string $photo_file): self
+    {
+        $this->photo_file = $photo_file;
 
         return $this;
     }

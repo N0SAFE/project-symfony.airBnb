@@ -23,11 +23,8 @@
         },
         "prototype/modifier": {
             "path": "./prototype.modifier.js",
-            "iniFunc": "setModifiedPrototypeClass",
-            "args": null,
             "sort": "built-in-prototype",
-            "ini": { "isRequire": true },
-            "require": [{ "script": "/global/association/string-class.js", "use": [""] }]
+            "require": [{ "script": "/global/association/string-class.js", "use": ["default"] }]
         },
         "dev": {
             "path": "./dev.js"

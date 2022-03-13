@@ -203,7 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->rents->contains($rent)) {
             $this->rents[] = $rent;
-            $rent->setTenantId($this);
+            $rent->setTenant($this);
         }
 
         return $this;
@@ -213,8 +213,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->rents->removeElement($rent)) {
             // set the owning side to null (unless already changed)
-            if ($rent->getTenantId() === $this) {
-                $rent->setTenantId(null);
+            if ($rent->getTenant() === $this) {
+                $rent->setTenant(null);
             }
         }
 
@@ -233,7 +233,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->residences->contains($residence)) {
             $this->residences[] = $residence;
-            $residence->setOwnerId($this);
+            $residence->setOwner($this);
         }
 
         return $this;
@@ -243,8 +243,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->residences->removeElement($residence)) {
             // set the owning side to null (unless already changed)
-            if ($residence->getOwnerId() === $this) {
-                $residence->setOwnerId(null);
+            if ($residence->getOwner() === $this) {
+                $residence->setOwner(null);
             }
         }
 

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Rent;
+use App\Entity\Residence;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,16 @@ class RentRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Rent::class);
+    }
+
+
+    public function findByResidence(Residence $residence){
+        return $this->createQueryBuilder('r')
+            ->join('r.residence', 'res')
+            ->andWhere('res='.$residence->getId())
+            ->orderBy('r.departure_date', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

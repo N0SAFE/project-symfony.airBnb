@@ -22,12 +22,10 @@ security:
         main:
             lazy: true
             provider: in_database
-            form_login:
-                login_path: login_process
-                check_path: login_process
-                default_target_path: profil
             logout:
-                path: app_logout
+                path: logout
+            custom_authenticators:
+                - App\Security\SecurityAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -39,5 +37,3 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/profil, roles: [ROLE_OWNER, ROLE_REPRESENTATIVE, ROLE_TENANT] }

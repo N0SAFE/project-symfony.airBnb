@@ -1,7 +1,7 @@
 const PARAMS = window.PARAMS[
     import.meta.url];
 
-class ModifiedPrototype {
+export default new(class ModifiedPrototype {
     // contain all association between fileName and associate object
     // example : association{"prototype/array": Array}
     association = {}
@@ -10,9 +10,11 @@ class ModifiedPrototype {
 
     constructor() {
         this.prototype = {}
+        this.setAssociations()
+        this.add(Array, "asyncForEach", asyncForEach)
     }
 
-    classNewPrototype(object, propertyName, value, moduleNameForConflict = "") {
+    add(object, propertyName, value, moduleNameForConflict = "") {
 
         moduleNameForConflict = moduleNameForConflict != "" ? "[" + moduleNameForConflict + "]" : ""
         this.createNewBibl(Object.prototype.toString.call(object()))
@@ -25,6 +27,25 @@ class ModifiedPrototype {
         this.prototype[Object.prototype.toString.call(object()) + moduleNameForConflict].property.push(value)
 
     }
+
+    async addFromFiles(...array) {
+        return await Promise.all(array.map(async function([fileName, funcName, name]) {
+            return this.loadPrototypeFromFile(fileName, funcName, name)
+        }, this))
+    }
+
+    async addFromFile(fileName, funcName, name = undefined) {
+        if (scriptLoader == undefined) {
+            throw new Error("to use the function loadPrototypeFromFile, you must ini the built-in package")
+        }
+        if (scriptLoader.call(fileName) == false) {
+            await scriptLoader.load(fileName)
+        }
+        // console.log(scriptLoader.call(fileName, funcName))
+        this.add(this.association[fileName], name ? name : funcName, scriptLoader.call(fileName)[funcName])
+        return this.association[fileName].prototype;
+    }
+
     getPersonnalizedProperty(object, propertyName = null) {
         return propertyName == null ? this.prototype[object] : this.prototype[object][propertyName]
     }
@@ -46,44 +67,11 @@ class ModifiedPrototype {
             try { this.association[name] = this.association_string_to_object[object.params.object]; } catch {}
         }.bind(this))
     }
-}
 
-let modifiedPrototype
-
-export default function getModifiedPrototype() {
-    return modifiedPrototype
-}
-export function modifiedNewPrototype(object, propertyName, value, moduleNameForConflict = "") {
-    modifiedPrototype.classNewPrototype(object, propertyName, value, moduleNameForConflict)
-}
-export function setModifiedPrototypeClass() {
-    modifiedPrototype = new ModifiedPrototype()
-    modifiedPrototype.setAssociations()
-    modifiedNewPrototype(Array, "asyncForEach", asyncForEach)
-}
-
-export async function loadsPrototypeFromFile(...array) {
-    let promises = array.map(async function([fileName, funcName, name]) {
-        return loadPrototypeFromFile(fileName, funcName, name)
-    })
-    return await Promise.all(promises)
-}
-
-export async function loadPrototypeFromFile(fileName, funcName, name = undefined) {
-    if (scriptLoader == undefined) {
-        throw new Error("to use the function loadPrototypeFromFile, you must ini the built-in package")
+    getModifiedPrototype() {
+        return this.prototype
     }
-    if (scriptLoader.call(fileName) == false) {
-        await scriptLoader.load(fileName)
-    }
-    // console.log(scriptLoader.call(fileName, funcName))
-    modifiedNewPrototype(modifiedPrototype.association[fileName], name ? name : funcName, scriptLoader.call(fileName)[funcName])
-    return true;
-}
-
-export function getActualModifiedPrototype() {
-    return getModifiedPrototype().prototype
-}
+})
 
 async function asyncForEach(callback = () => { throw new Error("error no callback assign"); }, wait = true, timeout = 0) {
     let ret = [];

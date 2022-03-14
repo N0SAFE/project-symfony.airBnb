@@ -28,7 +28,7 @@
 	{% include "global/navbar.html.twig" %}
 	<div class="container">
 		<h1>Connectez-vous</h1>
-		<form action="{{ path('login_process') }}" method="post">
+		<form method="post">
 			<div class="form-group">
 				<label for="email">Email</label>
 				<input type="email" class="form-control" id="email" name="email" placeholder="Email">
@@ -39,6 +39,8 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Se connecter</button>
 		</form>
+		<a href="reset-password">mot de passe oubliée ?</a>
+		<br></br>
 		<span class="text-danger" id="error-message"></span>
 	</div>
 	{% include "global/footer.html.twig" %}

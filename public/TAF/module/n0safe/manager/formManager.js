@@ -16,27 +16,12 @@ export default class formManager {
         return {
             form: {
                 element: this.formElement,
-                value: this.getAllInputs(),
+                value: new FormData(this.formElement),
                 get: function(property) {
                     return this.formElement[property]
                 }
             },
             callback: this.callback,
         }
-    }
-
-    getAllInputs() {
-        let inputs = this.formElement.querySelectorAll("input");
-        let all = {};
-        for (let i = 0; i < inputs.length; i++) {
-            let input = inputs[i];
-            all[input.name] = input.value;
-        }
-        let selects = this.formElement.querySelectorAll("select");
-        for (let i = 0; i < selects.length; i++) {
-            let select = selects[i];
-            all[select.name] = select.value;
-        }
-        return all;
     }
 }

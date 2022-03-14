@@ -90,6 +90,11 @@
             "console/prettyError": {
                 "path": "./console/prettyError.js",
                 "sort": "n0safe-console"
+            },
+            "symfony": {
+                "path": "./symfony/index.js",
+                "sort": "n0sage-symfony",
+                "require": [{ "script": "n0safe/manager/window", "use": ["default"] }]
             }
         },
         "db": {

@@ -13,15 +13,11 @@ let form = document.querySelector("form");
 let FormManager = await scriptLoader.loadAndCall("n0safe/manager/form", "default")
 
 let formManager = new FormManager(form, async function(property) {
-    let response = await ajax.get("login/process", "POST", { parse: "TEXT", data: property.form.value })
+    let response = await ajax.get("property/add/process", "POST", { parse: "JSON", data: property.form.value, getXml: true })
     console.log(response)
-    if (response != "ko") {
-        redirect("/")
+    if (response == "ok") {
+        redirect("/property")
     } else {
-        let inner = errorMessageElement.innerHTML
-        errorMessageElement.innerHTML = "l'email ou le mot de passe est incorrect"
-        setTimeout(() => {
-            errorMessageElement.innerHTML = inner
-        }, 3000)
+        // todo : fetch response and display the error (response is an array with the name of the block error)
     }
 })

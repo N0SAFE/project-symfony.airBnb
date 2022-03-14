@@ -61,7 +61,7 @@ getHashedPassword:
 
 
 
-property_list_owner:
+property_list:
     path: /property
     methods: ["GET"]
     controller: App\Controller\PropertyController::list
@@ -73,7 +73,31 @@ see_property:
     requirements:
         id: '\d+'
 
+modify_property_process:
+    path: /property/modify/process
+    methods: [ "POST" ]
+    controller: App\Controller\PropertyController::modifyProcess
+
 add_property:
     path: /property/add
     methods: [ "GET" ]
     controller: App\Controller\PropertyController::add
+
+add_property_process:
+    path: /property/add/process
+    methods: [ "POST" ]
+    controller: App\Controller\PropertyController::addProcess
+
+
+
+representative_list:
+    path: /representative
+    methods: [ "GET" ]
+    controller: App\Controller\RepresentativeController::list
+
+see_representative:
+    path: /representative/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\RepresentativeController::see
+    requirements:
+        id: '\d+'

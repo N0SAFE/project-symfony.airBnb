@@ -23,6 +23,7 @@ class ChildWindow {
     }
     open(NEW = false) {
         if (this.opened == undefined || this.opened.closed || NEW) {
+            this.close()
             this.opened = window.open(this.url, this.windowName, this.parseOptions());
             this.opened.focus();
         } else {
@@ -38,6 +39,10 @@ class ChildWindow {
         if (this.opened) {
             this.opened.postMessage(data);
         }
+    }
+    write(data) {
+        if (this.opened)
+            this.opened.document.write(data)
     }
     parseOptions() {
         return Object.entries(this.options).map(([key, value]) => `${key}=${value}`).join(",");

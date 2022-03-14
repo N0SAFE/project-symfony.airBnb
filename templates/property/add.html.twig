@@ -1,0 +1,91 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar_active = "biens" %}
+
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="/global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="/property/index.style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container d-flex justify-content-center align-items-center">
+		<form enctype="multipart/form-data">
+			<div class="d-flex flex-row" style="height: 300px;">
+				<div class="d-flex flex-column h-100 justify-content-around">
+					<span>Nom de la residence</span>
+					<span>Adresse</span>
+					<span>Code postal</span>
+					<span>Pays</span>
+					<span>Gabarit inventaire</span>
+					<span>Photo</span>
+				</div>
+				<div class="d-flex flex-column h-100 justify-content-around align-items-center" style="width: 350px;">
+					<div style="width: 90%;">
+						<div class="input-group mb-1">
+							<input type="text" class="form-control" placeholder="name" aria-label="name" name="name">
+						</div>
+					</div>
+					<div style="width: 90%;">
+						<div class="input-group mb-1">
+							<input type="text" class="form-control" placeholder="address" aria-label="address" name="address">
+						</div>
+					</div>
+					<div style="width: 90%; gap: 10px;" class="d-flex justify-content-center align-items-center">
+						<div class="input-group mb-1">
+							<input type="text" class="form-control" placeholder="zip-code" aria-label="zip-code" name="zip-code">
+						</div>
+						<span>Ville</span>
+						<div class="input-group mb-1">
+							<input type="text" class="form-control" placeholder="city" aria-label="city" name="city">
+						</div>
+					</div>
+					<div style="width: 90%;">
+						<div class="input-group mb-1">
+							<input type="text" class="form-control" placeholder="country" aria-label="country" name="country">
+						</div>
+					</div>
+					<div style="width: 90%;">
+						<div class="input-group mb-1">
+							<input type="file" class="form-control" value="Résidence Saint-Vincent" name="inventory_file" >
+						</div>
+					</div>
+					<div style="width: 90%;">
+						<div class="input-group mb-1">
+							<input type="file" class="form-control"value="Résidence Saint-Vincent" name="photo_file">
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="btn btn-success">Mettre a jour les données</button>
+		</form>
+	</div>
+	{% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script type="module" src="/property/add.js"></script>
+{% endblock %}
+{# end js #}

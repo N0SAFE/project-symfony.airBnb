@@ -22,7 +22,7 @@
                 "sort": "creation-window",
                 "require": [
                     { "script": "function", "use": ["dirname"] },
-                    { "script": "n0safe/creator/element", "use": ["default"] },
+                    { "script": "n0safe/manager/element", "use": ["creator"] },
                     { "script": "./creation/window/onclickTab.js", "use": ["default"] }
                 ]
             }

@@ -57,7 +57,6 @@ class Residence
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $representative;
 

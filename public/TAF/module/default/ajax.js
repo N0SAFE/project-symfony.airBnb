@@ -101,7 +101,8 @@ export default new(class Ajax {
             data = param.data || null,
             parse = param.parse || null,
             route = param.route || false,
-            formData = new FormData();
+            formData = new FormData(),
+            getXml = param.getXml || false
 
         if (typeof url !== "string") {
             throw new Error("url must be string");
@@ -155,38 +156,34 @@ export default new(class Ajax {
             }
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        if (parse) {
-                            if (typeof parse === "function") {
-                                resolve(parse(xhr.responseText))
-                            } else if (typeof parse === "string") {
-                                if (parse.toUpperCase().trim() == "AUTO") {
-                                    scriptLoader.load("db/mime-type").then(function() {
-                                        let mimeType = scriptLoader.call("db/mime-type", "default()")
-                                        mimeType.extension(xhr.getResponseHeader("Content-Type").split(";")[0]).forEach(function(ext) {
-                                            let parsed
-                                            if (ext != "text") {
-                                                parsed = parseStr(xhr.responseText, ext);
-                                                if (!(parsed instanceof Error)) { resolve(parsed) }
-                                            }
-                                        })
-                                        resolve(parseStr(xhr.responseText, "TEXT"))
+                    if (parse) {
+                        if (typeof parse === "function") {
+                            resolve(parse(xhr.responseText))
+                        } else if (typeof parse === "string") {
+                            if (parse.toUpperCase().trim() == "AUTO") {
+                                scriptLoader.load("db/mime-type").then(function() {
+                                    let mimeType = scriptLoader.call("db/mime-type", "default()")
+                                    mimeType.extension(xhr.getResponseHeader("Content-Type").split(";")[0]).forEach(function(ext) {
+                                        let parsed
+                                        if (ext != "text") {
+                                            parsed = parseStr(xhr.responseText, ext);
+                                            if (!(parsed instanceof Error)) { resolve(parsed) }
+                                        }
                                     })
-                                } else {
-                                    let ret = parseStr(xhr.responseText, parse)
-                                    if (ret instanceof Error) {
-                                        throw new Error("parse must be JSON, TEXT, YAML, INI, XML or CSV")
-                                    }
-                                    resolve(ret)
-                                }
+                                    resolve(parseStr(xhr.responseText, "TEXT"))
+                                })
                             } else {
-                                throw new Error("unknow parsing type variable");
+                                let ret = parseStr(xhr.responseText, parse)
+                                if (ret instanceof Error) {
+                                    throw new Error("parse must be JSON, TEXT, YAML, INI, XML or CSV")
+                                }
+                                resolve(ret)
                             }
                         } else {
-                            resolve(xhr)
+                            throw new Error("unknow parsing type variable");
                         }
                     } else {
-                        reject(xhr)
+                        resolve(xhr)
                     }
                 }
             }

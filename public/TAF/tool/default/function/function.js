@@ -47,13 +47,12 @@ export const Timer = class Timer {
 }
 
 /**
- *  args start
- *  arg         1: <str>:string (string to verify)
- *  args end
- *  utility: verify if a string is a validURL
- *  return true if valid, false if not
+ * Check if a string is a valid URL
+ * @param str - The string to test.
+ * @returns The URL is being validated. If it is valid, it will return true. If it is not valid, it
+ * will return false.
  */
-export const isValidURL = function(str) {
+export const isValidURL = (str) => {
     try {
         new URL(str);
         return true;
@@ -62,39 +61,55 @@ export const isValidURL = function(str) {
     }
 }
 
-export const importScript = async function importScript(path) {
-    console.error()
-    path = path.substring(path.length - 3, path.length) === ".js" ? path : path + ".js"
-    try {
-        window.module = {}
-        return {
-            script: await
-            import ((isValidURL(path) ? "" : dirname(
-                import.meta.url, 4) + "/") + path),
-            module: {...module },
-            absoluteHref: (isValidURL(path) ? "" : dirname(
-                import.meta.url, 4) + "/") + path
-        }
-    } catch (e) { console.error(e) }
+/**
+ * It imports a JavaScript file from the specified path.
+ * @param path - The path to the script you want to import.
+ * @returns The script is being imported and the module is being returned.
+ */
+export const importScript = async(path) => {
+    if (!isValidURL(path)) {
+        path = path.substring(path.length - 3, path.length) === ".js" ? path : path + ".js"
+    }
+    TAF.export[path] = {}
+    return {
+        script: await
+        import ((isValidURL(path) ? "" : dirname(
+            import.meta.url, 4) + "/") + path),
+        module: {...TAF.export[path] },
+        href: (isValidURL(path) ? "" : dirname(
+            import.meta.url, 4) + "/") + path
+    }
 }
 
+/**
+ * It takes an object and converts it to a form data object.
+ * @param obj - The object that contains the data to be sent to the server.
+ * @returns The formData object.
+ */
 export const setFormData = (obj) => {
     const formData = new FormData();
     Object.keys(obj).forEach(key => formData.append(key, typeof obj[key] !== "string" ? JSON.stringify(obj[key]) : obj[key]));
     return formData;
 }
 
-export const autoFunction = function autoFunction(func, ...args) {
+/**
+ * It takes a function and any number of arguments and returns the result of the function.
+ * @param func - the function to be called
+ * @param args - The arguments to pass to the function.
+ * @returns The result of the function call.
+ */
+export const autoFunction = (func, ...args) => {
     return func(...args)
 }
 
-export const getPathFromServer = async function getPathFromServer(path) {
-    let div = document.createElement('div')
-    div.innerHTML = await getFromFile("php/getPath.php", { method: "POST", data: path })
-    return div.cloneNode(true)
-}
-
-export const getProcessTime = async function getProcessTime(callback, args, treatementProcess) {
+/**
+ * It measures the time it takes to execute a function.
+ * @param callback - The function that will be executed.
+ * @param args - The arguments to pass to the callback function.
+ * @param treatementProcess - a function that will be called after the callback function is executed.
+ * @returns The return value of the callback function.
+ */
+export const getProcessTime = async(callback, args, treatementProcess) => {
     if (!Array.isArray(args)) { args = [args] }
     if (typeof treatementProcess != "function" && treatementProcess != undefined) {
         treatementProcess = undefined;
@@ -113,7 +128,13 @@ export const getProcessTime = async function getProcessTime(callback, args, trea
     return ret
 }
 
-export const getRandomInt = function getRandomInt(max, min = null) {
+/**
+ * Generate a random integer between the specified minimum and maximum values
+ * @param max - The maximum value to return.
+ * @param [min=null] - The minimum value to return.
+ * @returns A random integer between the min and max values.
+ */
+export const getRandomInt = (max, min = null) => {
     if (min == null) {
         return Math.floor(Math.random() * max);
     } else {
@@ -121,25 +142,19 @@ export const getRandomInt = function getRandomInt(max, min = null) {
     }
 }
 
-/*
-    args start:
-    arg      1: number
-    arg      2: min
-    arg      3: max
-    args end
-    utility: clamp a value between a min and a max
-    example start:
-    exam      1: clamp(5, 1, 10) = 5
-    exam      2: clamp(0, 1, 10) = 1
-    exam      3: clamp(11, 1, 10) = 10
-    example end
-    return the clamped value between min and max
-*/
-export const clamp = function clamp(num, min, max) {
+/**
+ * Given a number, return the number if it is between a minimum and maximum value, otherwise return the
+ * minimum or maximum value
+ * @param num - The number you want to clamp.
+ * @param min - The minimum value to return.
+ * @param max - The maximum value to return.
+ * @returns The value of the input number, clamped between the min and max values.
+ */
+export const clamp = (num, min, max) => {
     return Math.min(Math.max(num, min), max);
 }
 
-export const setAttributeLoop = function setAttributeLoop(element, arrayKey, arrayValue) {
+export const setAttributeLoop = (element, arrayKey, arrayValue) => {
     if (arrayKey.length != arrayValue.length) {
         throw "the two array as not the same length"
     }
@@ -148,7 +163,7 @@ export const setAttributeLoop = function setAttributeLoop(element, arrayKey, arr
     }
 }
 
-export const appendChildLoop = function appendChildLoop(arrayParent, arrayChild) {
+export const appendChildLoop = (arrayParent, arrayChild) => {
     if (arrayKey.length != arrayValue.length) {
         throw "the two array as not the same length"
     }
@@ -157,7 +172,7 @@ export const appendChildLoop = function appendChildLoop(arrayParent, arrayChild)
     }
 }
 
-export const addClassLoop = function addClassLoop(arrayElement, arrayClass, elementIsSame = true) {
+export const addClassLoop = (arrayElement, arrayClass, elementIsSame = true) => {
     if (!elementIsSame) {
         if (arrayElement.length != arrayClass.length) {
             throw "the two array as not the same length"
@@ -172,7 +187,7 @@ export const addClassLoop = function addClassLoop(arrayElement, arrayClass, elem
     }
 }
 
-export const removeClassLoop = function removeClassLoop(arrayElement, arrayClass, elementIsSame = true) {
+export const removeClassLoop = (arrayElement, arrayClass, elementIsSame = true) => {
     if (!elementIsSame) {
         if (arrayElement.length != arrayClass.length) {
             throw "the two array as not the same length"
@@ -187,7 +202,7 @@ export const removeClassLoop = function removeClassLoop(arrayElement, arrayClass
     }
 }
 
-export const addFocus = function addFocus(x, element) {
+export const addFocus = (x, element) => {
     x.classList.add('isFocus');
     if (x.type == "textarea") {
         element.classList.add('focusElement');
@@ -198,7 +213,7 @@ export const addFocus = function addFocus(x, element) {
     console.log(x)
     LoopTestInputOnFocus(x, element);
 }
-export const removeFocus = function removeFocus(x, element) {
+export const removeFocus = (x, element) => {
     x.classList.remove('isFocus');
     if (x.type == "textarea") {
         try {
@@ -212,7 +227,7 @@ export const removeFocus = function removeFocus(x, element) {
         element.classList.remove('focusElement');
     }
 }
-export const loopTestInputOnFocus = function LoopTestInputOnFocus(x, element) {
+export const loopTestInputOnFocus = (x, element) => {
     var name;
     var box;
     if (x.classList.contains('isFocus')) {
@@ -238,10 +253,27 @@ export const loopTestInputOnFocus = function LoopTestInputOnFocus(x, element) {
         }, 100);
     }
 }
-export const setCursorRealTimeInput = function setCursorRealTimeInput(x) {
+
+/**
+ * The function takes in a textarea element and returns the textarea's value with a "|" character
+ * inserted at the cursor's current position
+ * @param x - the real time input element
+ * @returns The value of the input field, but with a pipe character inserted at the cursor position.
+ */
+
+export const setCursorRealTimeInput = (x) => {
     return x.value.slice(0, x.selectionStart) + "<span>|</span>" + x.value.slice(x.selectionStart, x.value.length)
 }
-export const returnSelfForValueDict = function returnSelfForValueDict(dict, index, elementToCatch) {
+
+/**
+ * Given a dictionary, return the key of the dictionary that has the value that matches the
+ * elementToCatch
+ * @param dict - the dictionary you want to search
+ * @param index - the index of the value you want to return
+ * @param elementToCatch - the value you want to return
+ * @returns The key of the dictionary that has the value that matches the elementToCatch.
+ */
+export const returnSelfForValueDict = (dict, index, elementToCatch) => {
     var temp = null
     Object.entries(dict).forEach(([key, value]) => {
         if (value[index] == elementToCatch) {
@@ -252,11 +284,30 @@ export const returnSelfForValueDict = function returnSelfForValueDict(dict, inde
     return temp;
 }
 
-export const returnElementFromDictArray = function returnElementFromDictArray(index1, index2, dict, elementToCatch) {
+/**
+ * Given a dictionary of arrays, return the element at the given index of the array at the given index
+ * of the dictionary
+ * @param index1 - the index of the element in the array that you want to return
+ * @param index2 - the index of the element in the array that you want to return.
+ * @param dict - the dictionary to search
+ * @param elementToCatch - The element that you want to return the value of.
+ * @returns The value of the element in the array that is being returned.
+ */
+
+export const returnElementFromDictArray = (index1, index2, dict, elementToCatch) => {
     return dict[returnSelfForValueDict(dict, index1, elementToCatch)][index2]
 }
 
-export const getDatasetValueFromArrayNode = function getDatasetValueFromArrayNode(array, dataset, valueToSearch, Default = undefined) {
+/**
+ * Given an array of elements, a dataset name, and a value to search for, return the element that has
+ * the dataset name and value
+ * @param {Array} array - The array to search through.
+ * @param {string} dataset - The name of the dataset to search for.
+ * @param valueToSearch - The value of the dataset attribute that you want to search for.
+ * @param [Default] - The default value to return if the value is not found.
+ * @returns The element that has the dataset value of valueToSearch.
+ */
+export const getDatasetValueFromArrayNode = (array, dataset, valueToSearch, Default = undefined) => {
     let ret = Default
     Array.from(array).every(element => {
         if (element.dataset[dataset] == valueToSearch) {
@@ -268,7 +319,13 @@ export const getDatasetValueFromArrayNode = function getDatasetValueFromArrayNod
     return ret
 }
 
-export const createIdBase = function createIdBase(base, len) {
+/**
+ * Create a random string of characters of a given length using a given base
+ * @param base - The base to use.
+ * @param len - The length of the random string to be generated.
+ * @returns A random string of characters.
+ */
+export const createIdBase = (base, len) => {
     var optionBase = [10, 2, 64, 16]
     var strBase;
     switch (base) {
@@ -292,15 +349,28 @@ export const createIdBase = function createIdBase(base, len) {
     return ret
 }
 
-export const personalizeSwitch = function personalizeSwitch(condition, array) {
+
+/**
+ * Given a condition and an array of arrays, where each array has two elements, the first element is a
+ * condition, and the second element is a function, the function will execute the function
+ * corresponding to the first element that matches the condition
+ * @param condition - The condition to check for.
+ * @param array - an array of arrays. Each array has two elements: the first is a condition, and the
+ * second is a function.
+ */
+export const personalizeSwitch = (condition, array) => {
     array.forEach(element => {
-        if (element["value"] === condition) {
-            console.log("test")
-            element["function"]()
+        if (element[0] === condition) {
+            element[1]()
         }
     })
 }
 
+/**
+ * Unzip an array of arrays into a single array
+ * @param array - The array to be unzipped.
+ * @returns An array of all the elements in the original array.
+ */
 export const unzipArray = (array) => {
     var ret = []
     array.forEach(element => {
@@ -310,12 +380,22 @@ export const unzipArray = (array) => {
 }
 
 
+/**
+ * Get the parameters of a function
+ * @param func - The function to get the parameters from.
+ * @returns An array of the parameters of the function.
+ */
 export const getFunctionParams = (func) => {
     let fnStr = func.toString().replace(/(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg, '');
     let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(/([^\s,]+)/g);
     return result === null ? [] : result;
 }
 
+/**
+ * Redirects the user to a new url
+ * @param url - The URL to redirect to.
+ * @param [time=0] - The time in milliseconds to wait before redirecting.
+ */
 
 export const redirect = (url, time = 0) => {
     setTimeout(() => {
@@ -324,10 +404,21 @@ export const redirect = (url, time = 0) => {
 }
 
 
+/**
+ * Given a path, return the filename
+ * @param path - The path to the file you want to download
+ * @returns The last item in the array.
+ */
 export const filename = (path) => {
     return path.split('/').pop()
 }
 
+/**
+ * Given a path, return the path of the parent directory
+ * @param path - The path to the file or directory.
+ * @param [deep=1] - The number of directories to go up.
+ * @returns The directory name of the path.
+ */
 export const dirname = (path, deep = 1) => {
     path = path.replace("\\", "/")
     for (let i = 0; i < deep; i++) {
@@ -336,8 +427,20 @@ export const dirname = (path, deep = 1) => {
     return path;
 }
 
-// this function will be attached to an object or call by the call(obj) function
-export const setDefault = function setDefault(attributeName, defaultValue, verifFunction = undefined) {
+/**
+ * If the attribute is undefined, set it to the default value. If the attribute is defined, and if the
+ * verifFunction is defined and returns true, then set the attribute to the default value
+ * @param attributeName - the name of the attribute to set.
+ * @param defaultValue - the default value to set if the attribute is undefined or if the verifFunction
+ * returns false.
+ * @param [verifFunction] - A function that takes the value of the attribute and returns a boolean. If
+ * the function returns false, the attribute is set to the default value.
+ * @error throw an error if the function is not attached to an object
+ * @returns Nothing.
+ */
+export function setDefault(attributeName, defaultValue, verifFunction = undefined) {
+    if (this)
+        throw new Error("this function must be attached to an object")
     let toTest = this[attributeName]
     if (toTest == undefined) {
         return this[attributeName] = defaultValue
@@ -346,6 +449,12 @@ export const setDefault = function setDefault(attributeName, defaultValue, verif
         return this[attributeName] = defaultValue
     }
 }
+
+
+export const isClass = (v) => {
+    return typeof v === 'function' && v.prototype.constructor === v;
+}
+
 
 /**
 for function and class:

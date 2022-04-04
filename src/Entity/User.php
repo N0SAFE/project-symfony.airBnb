@@ -58,19 +58,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $token;
 
     /**
-     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="tenant_id")
+     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="tenant")
      */
     private $rents;
 
     /**
-     * @ORM\OneToMany(targetEntity=Residence::class, mappedBy="owner_id")
+     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="owner")
+     */
+    private $managedRents;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Residence::class, inversedBy="users")
      */
     private $residences;
 
-    public function __construct()
+    public function __construct() 
     {
         $this->rents = new ArrayCollection();
         $this->residences = new ArrayCollection();
+        $this->propertyManagement = new ArrayCollection();
+        $this->residenceAssociations = new ArrayCollection();
+        $this->other = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -222,6 +230,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * @return Collection|Rent[]
+     */
+    public function getManagedRents(): Collection
+    {
+        return $this->managedRents;
+    }
+
+    public function addManagedRent(Rent $managedRents): self
+    {
+        if (!$this->managedRents->contains($managedRents)) {
+            $this->managedRents[] = $managedRents;
+            $managedRents->setTenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManagedRent(Rent $managedRents): self
+    {
+        if ($this->rents->removeElement($managedRents)) {
+            // set the owning side to null (unless already changed)
+            if ($managedRents->getTenant() === $this) {
+                $managedRents->setTenant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|Residence[]
      */
     public function getResidences(): Collection
@@ -233,7 +271,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->residences->contains($residence)) {
             $this->residences[] = $residence;
-            $residence->setOwner($this);
         }
 
         return $this;
@@ -241,12 +278,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeResidence(Residence $residence): self
     {
-        if ($this->residences->removeElement($residence)) {
-            // set the owning side to null (unless already changed)
-            if ($residence->getOwner() === $this) {
-                $residence->setOwner(null);
-            }
-        }
+        $this->residences->removeElement($residence);
 
         return $this;
     }

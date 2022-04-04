@@ -1,3 +1,6 @@
+const ArgumentsError = TAF.module.error.Type.ArgumentsError
+
+
 export const add = function(OBJECT, key, value, force) {
     if (force) {
         OBJECT[key] = value;
@@ -14,11 +17,25 @@ export const del = function(OBJECT, key) {
     Array.from(Object.keys(OBJECT)).includes(key) ? function() { delete OBJECT[key]; return true } : function() { return false };
 }
 
-export const addNewGlobal = function(OBJECT, suit, value) {
+export const addNew = function() {
+    let OBJECT, suit, value
+    if (this) {
+        if (arguments.length <= 2)
+            return new ArgumentsError("must be called with 2 arguments but " + arguments.length + " found")
+        OBJECT = this
+        suit = arguments[0]
+        value = arguments[1]
+    } else {
+        if (arguments.length <= 3)
+            return new ArgumentsError("must be called with 3 arguments but " + arguments.length + " found")
+        OBJECT = arguments[0]
+        suit = arguments[1]
+        value = arguments[2]
+    }
+
     // verify if suit is an array
     if (typeof suit !== 'array') {
-        console.error("[prototypeObject] addNewGlobal: suit is not an array");
-        return false;
+        throw new ArgumentsError("suit must be of type array")
     }
 
     function recursiveCallee(OBJECT, suit, value, location) {

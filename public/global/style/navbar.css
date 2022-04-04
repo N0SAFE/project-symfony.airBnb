@@ -29,8 +29,10 @@
 }
 
 .navbar .navbar-collapse {
+    position: relative;
     background: #9f5540;
     border-radius: 0 0 25px 25px;
+    z-index: 5;
 }
 
 .navbar .navbar-collapse.show,

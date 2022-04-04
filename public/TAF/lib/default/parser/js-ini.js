@@ -196,11 +196,12 @@ const unsafe = (val, doUnesc) => {
     return val
 }
 
-module.exports = {
-    parse: decode,
-    decode,
-    stringify: encode,
-    encode,
-    safe,
-    unsafe,
-}
+TAF.setExport(
+    import.meta.url, {
+        parse: decode,
+        decode,
+        stringify: encode,
+        encode,
+        safe,
+        unsafe,
+    })

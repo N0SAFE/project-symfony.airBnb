@@ -1,0 +1,1 @@
+const elmtCreator = window.elmtCreator

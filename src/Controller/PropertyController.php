@@ -27,8 +27,9 @@ class PropertyController extends AbstractController
         if (empty($page) && $page != 1) {
             return $this->redirect("property?page=1");
         }
+        
         if (in_array("ROLE_OWNER", $this->getUser()->getRoles())) {
-            $residences = $residenceRepository->findByOwner($this->getUser());
+            $residences = $residenceRepository->findAll();
         } else if (in_array("ROLE_REPRESENTATIVE", $this->getUser()->getRoles())) {
             $residences = $residenceRepository->findByRepresentative($this->getUser());
         } else {
@@ -119,6 +120,7 @@ class PropertyController extends AbstractController
         ));
     }
 
+    #[isGranted("ROLE_OWNER", null, "Vous n'avez pas le rôle correspondant à cette page !", 404)]
     public function modifyProcess(Request $request,KernelInterface $appKernel, SluggerInterface $slugger, EntityManagerInterface $em){
         $id = $request->request->get("id");
         $name = $request->request->get("name");

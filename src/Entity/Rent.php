@@ -74,6 +74,11 @@ class Rent
      */
     private $residence;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="managedRents")
+     */
+    private $owner;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -207,6 +212,18 @@ class Rent
     public function setResidence(?Residence $residence): self
     {
         $this->residence = $residence;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

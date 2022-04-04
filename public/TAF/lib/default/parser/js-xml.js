@@ -1,12 +1,13 @@
-module.exports = {
-    parseFromString: function(string, options) {
-        if (typeof string !== "string") {
-            throw new Error("Only strings can be parsed. Got '" + (typeof string) + "'.");
+TAF.setExport(
+    import.meta.url, {
+        parseFromString: function(string, options) {
+            if (typeof string !== "string") {
+                throw new Error("Only strings can be parsed. Got '" + (typeof string) + "'.");
+            }
+            var result = parseTagInner(string, 0);
+            return result;
         }
-        var result = parseTagInner(string, 0);
-        return result;
-    }
-}
+    })
 
 function parseTagInner(inner, index) {
     var inners = [];

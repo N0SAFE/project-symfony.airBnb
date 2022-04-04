@@ -64,7 +64,7 @@ class ConnexionController extends AbstractController{
         return $this->render("delete/index.html.twig");
     }
 
-    public function deleteProccess(UserRepository $userRepository){
+    public function deleteProccess(UserRepository $userRepository) {
         $user = $this->getUser();
         if(!$user){
             return new Response("unknow authentificator", 401);

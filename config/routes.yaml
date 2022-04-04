@@ -95,9 +95,52 @@ representative_list:
     methods: [ "GET" ]
     controller: App\Controller\RepresentativeController::list
 
-see_representative:
-    path: /representative/{id}
+modify_representative:
+    path: /representative/modify/{id}
     methods: [ "GET" ]
-    controller: App\Controller\RepresentativeController::see
+    controller: App\Controller\RepresentativeController::modify
     requirements:
         id: '\d+'
+
+modify_representative_process:
+    path: /representative/modify/process
+    methods: [ "POST" ]
+    controller: App\Controller\RepresentativeController::modifyProcess
+
+add_representative:
+    path: /representative/add
+    methods: [ "GET" ]
+    controller: App\Controller\RepresentativeController::add
+
+add_representative_process:
+    path: /representative/add/process
+    methods: [ "POST" ]
+    controller: App\Controller\RepresentativeController::addProcess
+
+
+rent_list:
+    path: /rent
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::list
+
+modify_rent:
+    path: /rent/modify/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::modify
+    requirements:
+        id: '\d+'
+
+modify_rent_process:
+    path: /rent/modify/process
+    methods: [ "POST" ]
+    controller: App\Controller\RentController::modifyProcess
+
+add_rent:
+    path: /rent/add
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::add
+
+add_rent_process:
+    path: /rent/add/process
+    methods: [ "POST" ]
+    controller: App\Controller\RentController::addProcess

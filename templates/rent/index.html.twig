@@ -1,0 +1,71 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar_active = "locataires" %}
+
+
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="/global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/loadAnimation.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="/property/index.style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container d-flex flex-column">
+        <div class="d-flex align-items-center">
+            <h1>Gestion des mandataires</h1>
+            <a class="btn btn-success" href="/rent/add">Nouveau mandataire</a>
+        </div>
+		<table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">nom</th>
+                    <th scope="col">prenom</th>
+                    <th scope="col">nombres de location</th>
+                    <th scope="col">Action </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for index, rent in rents %}
+                <tr>
+                    <th scope="row">{{index}}</th>
+                    <td>{{rent.tenant.lastName}}</td>
+                    <td>{{rent.tenant.firstName}}</td>
+                    <td>{{rent.tenant.rents|length}}</td>
+                    <td><a href="/rent/modify/{{rent.id}}" class="btn btn-success">Mettre a jour les données</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+	</div>
+	{% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	{# <script type="module" src="login/index.js"></script> #}
+{% endblock %}
+{# end js #}
+

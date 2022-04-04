@@ -6,6 +6,7 @@ use App\Entity\Residence;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @method Residence|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,9 +16,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ResidenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, Residence::class);
+        $this->em = $em;
     }
 
     public function findByOwner(User $user): array {
@@ -37,6 +39,7 @@ class ResidenceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
 
     // /**
     //  * @return Residence[] Returns an array of Residence objects

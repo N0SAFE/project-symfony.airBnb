@@ -72,6 +72,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $residences;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $address;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $address_supplement;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $zip_code;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $phone;
+
     public function __construct() 
     {
         $this->rents = new ArrayCollection();
@@ -285,6 +305,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $residence->setRepresentative(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getAddressSupplement(): ?string
+    {
+        return $this->address_supplement;
+    }
+
+    public function setAddressSupplement(?string $address_supplement): self
+    {
+        $this->address_supplement = $address_supplement;
+
+        return $this;
+    }
+
+    public function getZipCode(): ?string
+    {
+        return $this->zip_code;
+    }
+
+    public function setZipCode(?string $zip_code): self
+    {
+        $this->zip_code = $zip_code;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

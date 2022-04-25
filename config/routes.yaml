@@ -182,5 +182,5 @@ add_rent_process:
 
 rent_signup_process:
     path: /rent/signup/process
-    mathods: [ "POST" ]
+    methods: [ "POST" ]
     controller: App\Controller\RentController::signupProcess

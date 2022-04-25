@@ -42,9 +42,17 @@ class TenantController extends AbstractController {
         $lastName = $request->request->get("last_name");
         $firstName = $request->request->get("first_name");
         $email = $request->request->get("email");
+        $address = $request->request->get("address");
+        $addressSupplement = $request->request->get("addressSupplement");
+        $zipCode = $request->request->get("zipCode");
+        $phone = $request->request->get("phone");
 
-        if(empty($lastName) || empty($firstName) || empty($email)){
+        if(empty($lastName) || empty($firstName) || empty($email) || empty($address) ||  empty($zipCode) || empty($phone)){
             return new Response("bad credentials");
+        }
+
+        if(strlen($phone) != 10){
+            return new Response("incorrect phone number");
         }
 
         $user = $userRepository->findBy(array('email' => $email));
@@ -59,6 +67,11 @@ class TenantController extends AbstractController {
         $user->setFirstName($firstName);
         $user->setEmail($email);
         $user->setPassword($hashService->hashStr($password));
+        $user->setAddress($address);
+        $user->setAddressSupplement($addressSupplement);
+        $user->setZipCode($zipCode);
+        $user->setPhone($phone);
+
         $user->setIsVerified(true);
         $user->setRoles(array("ROLE_TENANT"));
 
@@ -97,13 +110,22 @@ class TenantController extends AbstractController {
         $passwordVerify = $request->request->get("password_verify");
         $notify = $request->request->get("notify");
         $id = $request->request->get("id");
+        $address = $request->request->get("address");
+        $addressSupplement = $request->request->get("addressSupplement");
+        $zipCode = $request->request->get("zipCode");
+        $phone = $request->request->get("phone");
+       
 
-        if (empty($lastName) || empty($firstName) || empty($email) || empty($id)) {
+        if (empty($lastName) || empty($firstName) || empty($email) || empty($id) || empty($address) || empty($zipCode) || empty($phone)) {
             return new Response("bad credentials");
         }
 
         if((!empty($password) || !empty($passwordVerify)) && (empty($password) || empty($passwordVerify))){
             return new Response("one pass set");
+        }
+
+        if(strlen($phone) != 10){
+            return new Response("incorrect phone number");
         }
 
         if($password != $passwordVerify){
@@ -120,8 +142,11 @@ class TenantController extends AbstractController {
         $user->setFirstName($firstName);
         $user->setEmail($email);
         $user->setPassword($hashService->hashStr($password));
-        $user->setIsVerified(true);
-        $user->setRoles(array("ROLE_TENANT"));
+        $user->setAddress($address);
+        $user->setAddressSupplement($addressSupplement);
+        $user->setZipCode($zipCode);
+         $user->setPhone($phone);
+
         if($notify){
             $email = (new TemplatedEmail())
                 ->from(new Address('sssebillemathis@gmail.com', 'mathis sebille'))

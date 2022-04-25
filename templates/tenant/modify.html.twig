@@ -33,23 +33,47 @@
             <div class="d-flex flex-column">
                 <h3>Name</h3>
                 <div style="width: 90%;">
-                    <span>Nom</span>
+                    <span>Nom <span style="color: red;">*</span></span>
                     <div class="input-group mb-1">
                         <input type="text" class="form-control" placeholder="nom" aria-label="last_name" name="last_name" value="{{ tenant.lastName }}">
                     </div>
                 </div>
                 <div style="width: 90%;">
-                    <span>Prenom</span>
+                    <span>Prenom <span style="color: red;">*</span></span>
                     <div class="input-group mb-1">
                         <input type="text" class="form-control" placeholder="penom" aria-label="first_name" name="first_name" value="{{ tenant.firstName }}">
                     </div>
                 </div>
                 <div style="width: 90%;">
-                    <span>Email</span>
+                    <span>Email <span style="color: red;">*</span></span>
                     <div class="input-group mb-1">
                         <input type="text" class="form-control" placeholder="email" aria-label="Email" name="email" value="{{ tenant.email }}">
                     </div>
                 </div>
+                <div style="width: 90%;">
+					<span>address <span style="color: red;">*</span></span>
+					<div class="input-group mb-1">
+						<input type="text" class="form-control" placeholder="address" aria-label="address" name="address" value="{{ tenant.address }}">
+					</div>
+				</div>
+				<div style="width: 90%;">
+					<span>complement d'address</span>
+					<div class="input-group mb-1">
+						<input type="text" class="form-control" placeholder="suplement d'address" aria-label="addressSupplement" name="addressSupplement" value="{{ tenant.addressSupplement }}">
+					</div>
+				</div>
+				<div style="width: 90%;">
+					<span>code postal  <span style="color: red;">*</span></span>
+					<div class="input-group mb-1">
+						<input type="text" class="form-control" placeholder="code postal" aria-label="zipCode" name="zipCode" value="{{ tenant.zipCode }}">
+					</div>
+				</div>
+                <div style="width: 90%;">
+					<span>numero de telephone<span style="color: red;">*</span></span>
+					<div class="input-group mb-1">
+						<input type="text" class="form-control" placeholder="numero de telephone" aria-label="phone" name="phone" maxlength="10" minlength="10" value="{{ tenant.phone }}">
+					</div>
+				</div>
                 <div style="width: 90%;">
                     <span>Mot de passe</span>
                     <div class="input-group mb-1">

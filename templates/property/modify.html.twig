@@ -30,13 +30,23 @@
 	<div class="container d-flex justify-content-center align-items-center">
 		<div class="d-flex" style="gap: 10px;">
 			<form style="width: 500px;">
-				<img style="aspect-ratio: 18/9; width: 100%; object-fit: cover;" src="/uploads/property/{{ residence.photoFile }}"  id="photo">
+				<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+					<div class="carousel-inner">
+						{% for index, photo in residence.photos %}
+							<div class="carousel-item {% if index == 0 %}active{% endif %}">
+								<img style="aspect-ratio: 18/9; width: 100%; object-fit: cover;" src="/uploads/property/{{ photo }}">
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				{# <img style="aspect-ratio: 18/9; width: 100%; object-fit: cover;" src="/uploads/property/{{ residence.photoFile }}"  id="photo"> #}
 				<div class="d-flex flex-row" style="height: 300px;">
 					<div class="d-flex flex-column h-100 justify-content-around">
 						<span>Nom de la residence</span>
 						<span>Adresse</span>
 						<span>Code postal</span>
 						<span>Pays</span>
+						<span>Gerant</span>
 						<span>Gabarit inventaire</span>
 						<span>Photo</span>
 					</div>
@@ -67,17 +77,24 @@
 							</div>
 						</div>
 						<div style="width: 90%;">
+							<select name="representative" class="form-select" aria-label="Default select example">
+								<option selected value="-1">selectionner un gerant</option>
+								{% for representative in representatives %}
+									<option name="representative" {% if representativeActive == representative.id %}selected{% endif %} value="{{ representative.id }}" >{{ representative.firstName }} {{ representative.lastName }} </option>	
+								{% endfor %}
+							</select>
+						</div>
+						<div style="width: 90%;">
 							<div class="input-group mb-1">
 								<input type="file" class="form-control" value="Résidence Saint-Vincent" name="inventory_file" >
 							</div>
 						</div>
 						<div style="width: 90%;">
 							<div class="input-group mb-1">
-								<input type="file" class="form-control"value="Résidence Saint-Vincent" name="photo_file" >
+								<input multiple type="file" class="form-control"value="Résidence Saint-Vincent" name="photo_file[]" >
 							</div>
 						</div>
 					</div>
-					
 				</div>
 				<button class="btn btn-success">Mettre a jour les données</button>
 			</form>
@@ -85,9 +102,9 @@
 				<h1 id="name">{{residence.name}}</h1>
 				<div class="d-flex" style="gap: 20px;">
 					<button class="btn btn-secondary" disabled>disponible a la location</button>
-					<button class="btn btn-success">ajouter une location</button>
+					<a href="/rent/add/property/{{ residence.id }}" class="btn btn-success">ajouter une location</a>
 				</div>
-				<span class="container"><b>3</b> Locations</span>
+				<span class="container"><b>{{ rents|length }}</b> Locations</span>
 				<table class="table">
 					<thead>
 						<tr>
@@ -105,7 +122,7 @@
 								<td>{{ rent.arrivalDate|date("m/d/Y") }}</td>
 								<td>{{ rent.departureDate|date("m/d/Y") }}</td>
 								<td>{{ rent.tenant.firstName }}</td>
-								<td><a class="btn" style="background: #9f5540; color: white;">acceder</a></td>
+								<td><a class="btn" style="background: #9f5540; color: white;" href="/rent/see/{{rent.id}}">acceder</a></td>
 							</tr>
 						{% endfor %}
 					</tbody>

@@ -4,7 +4,7 @@ const PARAMS = TAF.getParams(
 )
 
 // make the idea for the dev app (use scriptLoader:load and test/error/index.js)
-const windowManager = PARAMS.get("n0safe/manager/window", "default")
+const windowManager = PARAMS.get("manager/window", "default")
 const ErrorStackParser = TAF.module.error.ErrorStackParser
 const onrequestreceive = PARAMS.get("dev/onrequestreceive", "default")
 const components = PARAMS.get("dev/components")

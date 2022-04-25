@@ -1,83 +1,16 @@
 import { isValidURL } from "../../tool/default/function/function.js"
+import promiseManager from "./manager/promiseManager.js"
+import parser from "./function/parser.js"
 import scriptLoader from "./loader/scriptLoader.js"
+import windowManager from './manager/windowManager.js'
 
-export function ajaxLoad() {
-    scriptLoader.array.load(
-        ["/lib/default/parser/js-yaml.js"], ["/lib/default/parser/js-ini.js"], ["/lib/default/parser/js-xml.js"], ["/lib/default/parser/js-csv.js"]
-    )
-}
+export const ajaxLoad = () => scriptLoader.array.load(
+    ["/lib/default/parser/js-yaml.js"], ["/lib/default/parser/js-ini.js"], ["/lib/default/parser/js-xml.js"], ["/lib/default/parser/js-csv.js"]
+)
 
+// create a function to put in ajaxResponse and ajaxArrayResponse to allow the user the property to create a personal function
 
-async function parseStr(data, type) {
-    if (["YAML", "INI", "XML", "CSV"].includes(type.toUpperCase().trim())) {
-        await TAF.promise.ajaxLoad
-    }
-    if (type.toUpperCase().trim() == "JSON") {
-        return JSON.parse(data)
-    } else if (type.toUpperCase().trim() == "HTMLDOCUMENT") {
-        // return a HTMLDocument
-        return new DOMParser().parseFromString(data, "text/html")
-    } else if (type.toUpperCase().trim() == "HTML") {
-        // return a array of htmlElement if the data don't have a body and a head else return the body and the head
-        let doc = new DOMParser().parseFromString(data, "text/html")
-        let body, head
-        let xml = scriptLoader.call("/lib/default/parser/js-xml.js", "parseFromString")(data)
-        if (xml && Array.isArray(xml) && xml.length > 0 && Array.isArray(xml[0].childNodes)) {
-            xml[0].childNodes.forEach(function(node) {
-                if (node.tagName == "body") {
-                    body = true
-                }
-                if (node.tagName == "head") {
-                    head = true
-                }
-            })
-            if (body || head) {
-                return {
-                    body: doc.body,
-                    head: doc.head
-                }
-            } else {
-                let div = document.createElement("div")
-                div.innerHTML = data
-                return Array.from(div.children)
-            }
-        }
-        let div = document.createElement("div")
-        div.innerHTML = data
-        return Array.from(div.children)
-
-    } else if (type.toUpperCase().trim() == "HTMLARRAY") {
-        let doc = document.createElement("div")
-        doc.innerHTML = data
-        return Array.from(doc.children)
-    } else if (type.toUpperCase().trim() == "TEXT") {
-        return data
-    } else if (type.toUpperCase().trim() == "YAML") {
-        let yamlParse = scriptLoader.call("/lib/default/parser/js-yaml.js", "load")
-        return yamlParse(data)
-    } else if (type.toUpperCase().trim() == "INI") {
-        let confParse = scriptLoader.call("/lib/default/parser/js-ini.js", "parse")
-        return confParse(data)
-    } else if (type.toUpperCase().trim() == "XML") {
-        let xmlParse = scriptLoader.call("/lib/default/parser/js-xml.js", "parseFromString")
-        return xmlParse(data)
-    } else if (type.toUpperCase().trim() == "CSV") {
-        let csvParse = scriptLoader.call("/lib/default/parser/js-csv.js", "parse")
-        return csvParse(data)
-    } else if (type.toUpperCase().trim() == "SCRIPT") {
-        // info the script can't be of type module
-        let module = {}
-        eval(data);
-        return module
-    } else if (type.toUpperCase().trim() == "DEFAULT") {
-        return data
-    } else {
-        return new Error("Unsupported type")
-    }
-}
-
-window.test = []
-
+// stack container is a class to create a fonctional container in class this allows to get the parent and the child off the current object
 class StackContainer {
     /* Parsing the error stack and avoiding the file that is importing the error stack. */
     stack = TAF.module.error.ErrorStackParser.parseWithAvoid([{
@@ -95,28 +28,163 @@ class StackContainer {
     }
 }
 
+export const ajaxResponsePrototype = new(class AjaxResponsePrototype {
+    // the param function have to be the function for the AjaxResponse only and not the ArrayAjaxResponse
+    addCustomProperty(name, func, force) {
+        if (!(this.hasCustomProperty(name) && !force)) {
+            AjaxResponse.prototype[name] = func
+        }
+        if (func.constructor.name === "AsyncFunction") {
+            ArrayAjaxResponse.prototype[name] = async function(...args) { return Array.from(await Promise.all(this.map(async(ajaxResponse) => await ajaxResponse[name](...args)))) }
+                // paste the async function to AjaxResponse and copty the async function form ArrayAjaxResponse
+        } else {
+            ArrayAjaxResponse.prototype[name] = function(...args) { return Array.from(this.map(ajaxResponse => ajaxResponse[name](...args))) }
+                // paste the function to AjaxResponse and copty the function form ArrayAjaxResponse
+        }
+        return AjaxResponse[name]
+    }
+
+    removeCustomProperty(name) {
+        if (this.hasCustomProperty())
+            Object.getOwnPropertyNames(ArrayAjaxResponse.prototype).find((str) => str == name)
+    }
+
+    hasCustomProperty(name) {
+        return Object.getOwnPropertyNames(ArrayAjaxResponse.prototype).includes(name)
+    }
+
+    getPrototypeFunc() {
+        return Object.getOwnPropertyNames(ArrayAjaxResponse.prototype).filter((str) => { return !['constructor', 'prototype', '__proto__'].includes(str) })
+    }
+})
+
+
+// ArrayAjaxResponse is a container of AjaxResponse with all array property
+class ArrayAjaxResponse extends Array {
+    constructor(...ajaxResponse) {
+        super(...ajaxResponse.flat())
+    }
+
+    /* A function that takes a method as a parameter and returns an array of the results of calling the method on each element of the array. */
+    async parse(method) { return Array.from(await Promise.all(this.map(async(ajaxResponse) => await ajaxResponse.parse(method)))) }
+
+    /* Converting an array of ajax responses into an array of strings. */
+    toString() { return Array.from(this.map(ajaxResponse => ajaxResponse.toString())) }
+
+    /* Converting an array-like object into an array. */
+    xml() { return Array.from(this.map(ajaxResponse => ajaxResponse.xml())) }
+        /* Using the Array.from() method to convert the map() method's return value into an array. */
+    response() { return Array.from(this.map(ajaxResponse => ajaxResponse.response())) }
+
+    /* Using the Array.from() method to create a new array from the map() method. The map() method is used to call the getType() method on each element of the array. */
+    type() { return Array.from(this.map(ajaxResponse => ajaxResponse.type())) }
+
+    /* Using the Array.from() method to create a new array from the map() method. */
+    url() { return Array.from(this.map(ajaxResponse => ajaxResponse.url())) }
+
+    /* Creating an array of all the status codes from the ajax responses. */
+    status() { return Array.from(this.map(ajaxResponse => ajaxResponse.status())) }
+
+    /* Creating an array from the status text of each ajax response. */
+    statusText() { return Array.from(this.map(ajaxResponse => ajaxResponse.statusText())) }
+
+    /* Creating an array of booleans from the ajax responses. */
+    ok() { return Array.from(this.map(ajaxResponse => ajaxResponse.ok())) }
+
+    see() {
+        windowManager.blank(this.toString());
+        return this
+    }
+}
+
+// AjaxResponse is a class to treat an ajax response with multiple property
+class AjaxResponse {
+    constructor(xmlRequest, response) {
+        this.AjaxXml = xmlRequest
+        this.ajaxResponse = response
+        this.responseString = response
+    }
+
+    /* Parsing a string. */
+    async parse(method) {
+        if (method.toUpperCase().trim() == "AUTO") {
+            let mimeType = await scriptLoader.require({ module: "db/mime-type", property: "default" })
+            if (this.xml().getResponseHeader("Content-Type")) {
+                for (let ext of mimeType.extension(this.xml().getResponseHeader("Content-Type").split(";")[0])) {
+                    let parsed
+                    if (ext != "text") {
+                        parsed = await parser.parseFromStr(this.responseString, ext);
+                        if (!(parsed instanceof Error)) { return parsed }
+                    }
+                }
+            }
+            console.error("the content type of the requested file can't be readed (return default parse: text)")
+            return parser.parseFromStr(this.responseString, "TEXT")
+        } else {
+            let ret = parser.parseFromStr(this.responseString, method)
+            if (ret instanceof Error) {
+                throw new Error("method must be JSON, TEXT, YAML, INI, XML or CSV")
+            }
+            return ret
+        }
+    }
+
+    /* Defining a function called toString that returns the responseString. */
+    toString() { return this.responseString }
+
+    /* A getter function that returns the value of the xml property. */
+    xml() { return this.AjaxXml }
+
+    /* A function that returns the value of this.response. */
+    response() { return this.ajaxResponse }
+
+    /* A function that returns the responseType property of the XMLHttpRequest object. */
+    type() { return this.xml().responseType }
+
+    /* Returning the URL of the XMLHttpRequest. */
+    url() { return this.xml().responseURL }
+
+    /* A lambda function that returns the status of the XMLHttpRequest object. */
+    status() { return this.xml().status }
+
+    /* A function that returns the status text of the XMLHttpRequest object. */
+    statusText() { return this.xml().statusText }
+
+    /* A lambda expression that returns true if the response is "ok". */
+    ok() { return this.response().toLowerCase().trim() == "ok" }
+
+    see() {
+        windowManager.blank(this.toString());
+        return this
+    }
+}
+
 export default new(class Ajax {
     allRequest = []
-    isValidMethod(str) {
-        return ["GET", "POST", "PUT", "DELETE"].includes(str.toUpperCase().trim())
+
+    acceptedMethod = {
+        default: ["GET", "POST", "PUT", "DELETE"],
+        cypted: ["GET", "POST"]
     }
+    isValidMethod = (str) => this.acceptedMethod.default.includes(str.toUpperCase().trim())
+    isValidCryptedMethod = (str) => this.acceptedMethod.crypted.includes(str.toUpperCase().trim())
 
     array = (function() {
         return {
-            get: async function(...array) {
-                return Promise.all(array.map(function(item) { return this.get(...item) }.bind(this)))
-            }.bind(this),
-            set: function(...array) {
-                return array.map(function(item) { return this.set(...item) }.bind(this))
-            }
+            get: function(...array) {
+
+                return promiseManager.custom(async(resolve, reject) => {
+                        resolve(new ArrayAjaxResponse(...await Promise.all(array.map(function(item) { return this.get(item) }.bind(this)))))
+                    },
+                    ajaxResponsePrototype.getPrototypeFunc().map(function(name) {
+                        return { name, func: function(funcArgs) { return this[name](...funcArgs) } }
+                    })
+                )
+            }.bind(this)
         }
     }.bind(this))()
 
-    getCalleeStackFrame = function() {
-        return (new StackContainer).getLast()
-    }
-
-
+    getCalleeStackFrame = () => (new StackContainer).getLast()
 
     async setCryptedFormData(formData, url, method, crypt) {
         let uncryptFunc = function(str) { return str }
@@ -164,7 +232,6 @@ export default new(class Ajax {
                     }
                 }
 
-                console.log(Object.entries(arrayObj))
                 Object.entries(arrayObj).forEach(function([key, valArray]) {
                     formData.delete(key)
                     console.log(key)
@@ -185,11 +252,10 @@ export default new(class Ajax {
                     return (await sodium.crypto_box_seal_open(sodium.sodium_hex2bin(cipherText), clientPublicKey, clientSecretKey)).toString();
                 }
             }
-            formData.append("__ajax-crypt-path__", url)
+            formData.append("__ajax-crypt-path__", "http://localhost/test/framework/TAF/js/TAF/tool/default/test.php")
+                // formData.append("__ajax-crypt-path__", url)
             url =
                 import.meta.url + "/../ajaxRedirect.php"
-
-            window.test.push(formData)
         }
 
         return { url, uncryptFunc }
@@ -199,15 +265,19 @@ export default new(class Ajax {
     // this function send and receive data
     // param = Object<route = false, parse = text(json, text, yaml, ini, xml, csv), data:any, headers:Headers>
     // return an XMLRequest object (with the finished request) || if the param.parse is set return the parsed XMLRequest.responseText
-    get(url, method = "GET", param) {
+    get(param) {
         param = param || {};
+        if (!(param instanceof Object)) {
+            throw new Error("the param argument must be of type object")
+        }
         let headers = param.headers || new Headers(),
             data = param.data || null,
             parse = param.parse || null,
             route = param.route || false,
             crypt = param.crypt || false,
-            getXml = param.getXml || false,
-            formData = new FormData();
+            formData = new FormData(),
+            url = param.url,
+            method = param.method || "GET";
 
         formData.id = Math.random()
 
@@ -259,7 +329,8 @@ export default new(class Ajax {
             }
         }
 
-        let content = new Promise(async(resolve, reject) => {
+        let promise = new Promise(async(resolve, reject) => {
+            let promise = this
 
             let xhr = new XMLHttpRequest()
             this.lastRequest = xhr;
@@ -277,98 +348,61 @@ export default new(class Ajax {
 
             if (method.toUpperCase().trim() == "GET") {
                 url = url.split("?")[0] + "?" + Array.from(formData.entries()).filter(function([key, value]) { return typeof value == "string" }).map(([key, value]) => { formData.delete(key); return key + "=" + value }).join("&")
-                xhr.open(method.toUpperCase().trim(), url, true)
+                xhr.open(method.toUpperCase().trim(), url.at(-1) == "?" ? url.substring(0, url.length - 1) : url, true);
             } else {
                 xhr.open(method.toUpperCase().trim(), url, true);
             }
 
             xhr.getUncrypted = function() { return uncryptFunc(xhr.responseText) }
-            xhr.onreadystatechange = async() => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
+            xhr.onreadystatechange = async function() {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
                         if (parse) {
                             if (typeof parse === "function") {
-                                if (getXml)
-                                    resolve({ xhr, response: parse(await uncryptFunc(xhr.responseText)) })
-                                resolve(parse(await uncryptFunc(xhr.responseText)))
+                                resolve(new AjaxResponse(this, parse(await uncryptFunc(this.responseText))))
                             } else if (typeof parse === "string") {
-                                if (parse.toUpperCase().trim() == "AUTO") {
-                                    let mimeType = await scriptLoader.require({ module: "db/mime-type", property: "default" })
-                                    if (!xhr.getResponseHeader("Content-Type")) {
-                                        console.error("the content type of the requested file can't be readed (return default parse: text)")
-                                    } else {
-                                        await mimeType.extension(xhr.getResponseHeader("Content-Type").split(";")[0]).forEach(await async function(ext) {
-                                            let parsed
-                                            if (ext != "text") {
-                                                parsed = await parseStr(await uncryptFunc(xhr.responseText), ext);
-                                                if (!(parsed instanceof Error)) {
-                                                    if (getXml)
-                                                        resolve({ xhr, response: parsed })
-                                                    resolve(parsed)
-                                                }
-                                                resolve(new Error("the uncrypt function occure an error"))
-                                            }
-                                        })
-                                    }
-                                    if (getXml)
-                                        resolve({ xhr, response: parseStr(await uncryptFunc(xhr.responseText), "TEXT") })
-                                    resolve(parseStr(await uncryptFunc(xhr.responseText), "TEXT"))
-                                } else {
-                                    let ret = parseStr(await uncryptFunc(xhr.responseText), parse)
-                                    if (ret instanceof Error) {
-                                        throw new Error("parse must be JSON, TEXT, YAML, INI, XML or CSV")
-                                    }
-                                    if (getXml)
-                                        resolve({ xhr, response: ret })
-                                    resolve(ret)
-                                }
+                                let ajaxResponse = new AjaxResponse(this, this.responseText)
+                                ajaxResponse.ajaxResponse = await ajaxResponse.parse(parse)
+                                resolve(ajaxResponse)
                             } else {
                                 throw new Error("unknow parsing type variable");
                             }
                         } else {
-                            if (retXhr)
-                                resolve({ xhr, response: xhr.responseText })
-                            resolve(xhr.responseText)
+                            resolve(new AjaxResponse(this, this.responseText))
                         }
                     } else {
-                        if (getXml)
-                            reject({ xhr, response: xhr.responseText })
-                        reject(xhr.responseText)
+                        reject(new AjaxResponse(this, this.responseText))
                     }
                 }
             }
             Array.from(headers.entries()).map(([key, value]) => {
                 xhr.setRequestHeader(key, value)
             })
-
-            try {
-                console.log(...data.entries())
-            } catch {}
-
             if (formData && method.toUpperCase().trim() != "GET") {
                 xhr.send(formData)
             } else {
                 xhr.send()
             }
-        });
-        return content.catch(res => res);
+        })
+
+        return promise.then(res => res, res => res, AjaxResponse)
     }
 
 
-    getLastXmlRequest() {
-        return this.lastRequest
-    }
+    getLastXmlRequest = () => this.lastRequest
 
 
     // this function send data
     // param = Object<route = false, data:any, headers:Headers>
-    send(url, method = "POST", param) {
+    send(param) {
         param = param || {};
         let headers = param.headers || new Headers(),
             data = param.data || null,
             route = param.route || false,
             crypt = param.crypt || false,
-            formData = new FormData();
+            formData = new FormData(),
+            url = param.url,
+            method = param.method || "POST"
 
         if (typeof url !== "string") {
             throw new Error("url must be string");

@@ -1,6 +1,7 @@
 const PARAMS = getParams()
 
 export default class UniqueId extends PARAMS.get("n0safe/__unique/super__", "default") {
+    // this function have to create a suite of id and be able to sort an id not use (not just the more high id)
     constructor(params) {
         super(params, function() {
             return this.elements.slice(-1)[0] + 1 || 0
@@ -16,4 +17,8 @@ export default class UniqueId extends PARAMS.get("n0safe/__unique/super__", "def
         }
         return ret
     }
+}
+
+export const unique = () => {
+    return (new Date()).getTime() + (Math.round(Math.random() * 10000))
 }

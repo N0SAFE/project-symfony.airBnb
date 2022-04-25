@@ -23,11 +23,11 @@ use Doctrine\Persistence\ManagerRegistry;
 class RepresentativeController extends AbstractController
 {
 
-    public function list(UserRepository $userRepository)
+    public function list(UserRepository $userRepository, ResidenceRepository $residenceRepository)
     {
         $representatives = $userRepository->findByRole("ROLE_REPRESENTATIVE");
         return $this->render("representative/index.html.twig", array(
-            "representatives" => $representatives
+            "representatives" => array_values($representatives)
         ));
     }
 
@@ -55,6 +55,10 @@ class RepresentativeController extends AbstractController
             $representative->addResidence($residenceRepository->find($id));
         }
 
+        $representative->setLastName($lastName);
+        $representative->setFirstName($firstName);
+        $representative->setEmail($email);
+
         $em->persist($representative);
         $em->flush();
         
@@ -68,17 +72,10 @@ class RepresentativeController extends AbstractController
         $representativeResidences = $representative->getResidences();
         $residences = $residenceRepository->findAll();
 
-        $arrayResidences = array();
-        for ($i = 0; $i < count($residences); $i++) {
-            $arrayResidences[] = array(
-                "val" => $residences[$i],
-                "selected" => in_array($residences[$i], $representativeResidences->toArray())
-            );
-        }
-
         return $this->render("representative/modify.html.twig", array(
+            "residencesSelected" => $representativeResidences,
             'representative' => $representative,
-            'residences' => $arrayResidences
+            'residences' => $residences
         ));
     }
 
@@ -90,7 +87,11 @@ class RepresentativeController extends AbstractController
         $email = $request->request->get("email");
 
         if (empty($lastName) || empty($firstName) || empty($email)) {
-            return new Response("bad credential");
+            return new Response(json_encode([
+                "lastName" => empty($lastName),
+                "firstName" => empty($firstName),
+                "email" => empty($email)
+            ]), 401);
         }
 
         $user = $userRepository->findBy(array('email' => $email));
@@ -112,7 +113,7 @@ class RepresentativeController extends AbstractController
         $email = (new TemplatedEmail())
             ->from(new Address('sssebillemathis@gmail.com', 'mathis sebille'))
             ->to($user->getEmail())
-            ->subject('Your password reset request')
+            ->subject('bonjour')
             ->htmlTemplate('representative/email.html.twig')
             ->context([
                 'first_name' => $firstName,

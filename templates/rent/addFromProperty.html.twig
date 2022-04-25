@@ -1,0 +1,99 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar_active = "locataires" %}
+
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="/global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/loadAnimation.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="/property/index.style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container d-flex" style="justify-content: space-between;margin-top: 100px;">
+		<form class="d-flex flex-column h-100" style="width: 40%; gap: 10px;">
+			<h3>{{ residence.name }}</h3>
+            <input type="hidden" value="{{ residence.id }}" name="residence">
+            <input type="hidden" value="{{ representative.id }}" name="representative">
+			<div>
+				<span>Nom</span>
+				<select name="tenant" class="form-select">
+					<option selected value="-1">Sélectionner un locataire</option>
+					{% for tenant in tenants %}
+						<option value="{{ tenant.id }}">{{tenant.firstName}}  {{ tenant.lastName }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div>
+				<span>Debut de la location</span>
+				<div class="input-group mb-1">
+					<input type="date" class="form-control" aria-label="rent_start" name="rent_start">
+				</div>
+			</div>
+			<div>
+				<span>Fin de la location</span>
+				<div class="input-group mb-1">
+					<input type="date" class="form-control" aria-label="rent_end" name="rent_end">
+				</div>
+			</div>
+            <button class="btn btn-success">submit</button>
+		</form>
+		<div>
+			<h3>Mes locations</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">nom</th>
+						<th scope="col">prenom</th>
+						<th scope="col">biens</th>
+						<th scope="col">Action
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for index, rent in rents %}
+						<tr>
+							<th scope="row">{{index}}</th>
+							<td>{{rent.arrivalDate|date("m/d/y")}}</td>
+							<td>{{rent.departureDate|date("m/d/y")}}</td>
+							<td>{{rent.residence.name}}</td>
+							<td>
+								<a href="/rent/see/{{rent.id}}" class="btn btn-success">Mettre a jour les données</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script type="module" src="/rent/add.js"></script>
+{% endblock %}
+{# end js #}
+

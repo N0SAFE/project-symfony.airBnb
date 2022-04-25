@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class PropertyController extends AbstractController
 {
 
-    public function list(ResidenceRepository $residenceRepository, Request $request, RentRepository $rentRepository, UserRepository $userRepository)
+    public function list(ResidenceRepository $residenceRepository, Request $request, RentRepository $rentRepository, UserRepository $userRepository, EntityManagerInterface $em)
     {
         $page = $request->query->get('page');
         if (empty($page) && $page != 1) {
@@ -31,7 +31,7 @@ class PropertyController extends AbstractController
         if (in_array("ROLE_OWNER", $this->getUser()->getRoles())) {
             $residences = $residenceRepository->findAll();
         } else if (in_array("ROLE_REPRESENTATIVE", $this->getUser()->getRoles())) {
-            $residences = $residenceRepository->findByRepresentative($this->getUser());
+            $residences = $residenceRepository->findBy(array('representative' => $this->getUser()));
         } else {
             throw new HttpException(401, "you do not have access to this page");
         }
@@ -49,7 +49,7 @@ class PropertyController extends AbstractController
             }
 
             return $this->render("property/index.html.twig", array(
-                "residences" => array_map(function (Residence $residence) use ($rentRepository, $userRepository) {
+                "residences" => array_map(function (Residence $residence) use ($rentRepository, $userRepository, $em) {
                     $rentArray = $rentRepository->findByResidence($residence);
                     $occupation = "Non Occupé";
                     $availability = "disponible";
@@ -62,7 +62,6 @@ class PropertyController extends AbstractController
                     }
 
                     $user = $userRepository->find($residence->getOwner());
-
                     return array(
                         "name" => $residence->getName(),
                         "id" => $residence->getId(),
@@ -72,7 +71,7 @@ class PropertyController extends AbstractController
                         "occupation" => $occupation,
                         // owner is a join of residence on user by residence.owner_id
                         "owner" => $user->getFirstName() . " " . $user->getLastName(),
-                        "image" => $residence->getPhotoFile()
+                        "image" => count($residence->getPhotos()) > 0 ? $residence->getPhotos()[0] : ""
                     );
                 }, array_slice($residences, $index * 10, ($index + 1) * 10)),
                 "residences_length" => count($residences),
@@ -102,34 +101,39 @@ class PropertyController extends AbstractController
         return $this->render("property/error.html.twig", array("page" => $page));
     }
 
-    public function see(int $id, ResidenceRepository $residenceRepository, RentRepository $rentRepository, KernelInterface $appKernel)
+    public function modify(int $id, ResidenceRepository $residenceRepository, RentRepository $rentRepository, KernelInterface $appKernel, UserRepository $userRepository)
     {
         $residence = $residenceRepository->find($id);
         $rentArray = $rentRepository->findByResidence($residence);
-        return $this->render("property/see.html.twig", array(
+        $representatives = $userRepository->findByRole("ROLE_REPRESENTATIVE");
+        return $this->render("property/modify.html.twig", array(
             "residence" => array(
                 "name" => $residence->getName(),
                 "address" => $residence->getAddress(),
                 "zipCode" => $residence->getZipCode(),
                 "city" => $residence->getCity(),
                 "country" => $residence->getCountry(),
-                "photoFile" => $residence->getPhotoFile(),
+                "photos" => $residence->getPhotos(),
+                "id" => $residence->getId()
             ),
             "rents" => $rentArray,
-            "id" => $id
+            "id" => $id,
+            "representatives" => $representatives,
+            "representativeActive" => ($residence->getRepresentative() ? $residence->getRepresentative()->getId() : -1)
         ));
     }
 
     #[isGranted("ROLE_OWNER", null, "Vous n'avez pas le rôle correspondant à cette page !", 404)]
-    public function modifyProcess(Request $request,KernelInterface $appKernel, SluggerInterface $slugger, EntityManagerInterface $em){
+    public function modifyProcess(Request $request,KernelInterface $appKernel, SluggerInterface $slugger, EntityManagerInterface $em, UserRepository $userRepository){
         $id = $request->request->get("id");
         $name = $request->request->get("name");
         $address = $request->request->get("address");
         $zip_code = $request->request->get("zip-code");
         $city = $request->request->get("city");
         $country = $request->request->get("country");
+        $representative = $request->request->get("representative");
         $inventory_file = $request->files->get("inventory_file");
-        $photo_file = $request->files->get("photo_file");
+        $photo_files = $request->files->get("photo_file");
 
         if(!$id){
             return new Response("can't fetch the entity because no id was found", 404);
@@ -153,7 +157,7 @@ class PropertyController extends AbstractController
         }
 
         if (count($error) > 0) {
-            return new JsonResponse($error, 412);
+            return new JsonResponse($error, 401);
         }
 
         $targetDir = $appKernel->getProjectDir() . "/public/uploads/property";
@@ -170,8 +174,11 @@ class PropertyController extends AbstractController
         if ($inventory_file != null) {
             $residence->setInventoryFile($fileUploader->upload($inventory_file));
         }
-        if ($photo_file != null) {
-            $residence->setPhotoFile($fileUploader->upload($photo_file));
+        if (count($photo_files) != 0) {
+            $residence->setPhotos(array_map(function($photo_file) use ($fileUploader) {return $fileUploader->upload($photo_file);}, $photo_files));
+        }
+        if($representative != -1){
+            $residence->setRepresentative($userRepository->find($representative));
         }
 
         $em->persist($residence);
@@ -196,7 +203,7 @@ class PropertyController extends AbstractController
         $city = $request->request->get("city");
         $country = $request->request->get("country");
         $inventory_file = $request->files->get("inventory_file");
-        $photo_file = $request->files->get("photo_file");
+        $photo_files = $request->files->get("photo_file");
 
         $error = array();
 
@@ -215,12 +222,14 @@ class PropertyController extends AbstractController
         switch(null){
             case $inventory_file:
                 array_push($error, "inventory_file");
-            case $photo_file:
-                array_push($error, "photo_file");
+        }
+
+        if(count($photo_files) == 0){
+            array_push($error, "photo_files");
         }
 
         if(count($error) > 0 ){
-            return new JsonResponse($error, 412);
+            return new JsonResponse($error, 401);
         }
 
         $targetDir = $appKernel->getProjectDir() . "/public/uploads/property";
@@ -231,7 +240,7 @@ class PropertyController extends AbstractController
 
         $residence
             ->setInventoryFile($fileUploader->upload($inventory_file))
-            ->setPhotoFile($fileUploader->upload($photo_file))
+            ->setPhotos(array_map(function($photo_file) use ($fileUploader) {return $fileUploader->upload($photo_file);}, $photo_files))
             ->setOwner($this->getUser())
             ->setName($name)
             ->setAddress($address)

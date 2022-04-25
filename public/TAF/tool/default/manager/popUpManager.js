@@ -1,5 +1,6 @@
-const PARAMS = window.PARAMS[
-    import.meta.url]
+const PARAMS = TAF.getParams(
+    import.meta.url
+)
 
 const elmtCreator = PARAMS.get("n0safe/manager/element", "creator")
 

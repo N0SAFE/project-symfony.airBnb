@@ -1,0 +1,136 @@
+{% extends "base.html.twig" %}
+
+{% block default_var %}{% endblock %}
+
+
+{% set navbar_active = "locataires" %}
+
+
+{# head #}
+{% block title %}
+	titre de la page
+{% endblock %}
+
+{% block meta %}{% endblock %}
+
+{% block stylesheets %}
+	<link href="/global/style/style.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/loadAnimation.css" rel="stylesheet" type="text/css">
+	<link href="/global/style/navbar.css" rel="stylesheet" type="text/css">
+	<link href="/property/index.style.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block preload_js %}{% endblock %}
+{# end head #}
+
+
+{# body #}
+{% block body %}
+	{% include "global/navbar.html.twig" %}
+	<div class="container d-flex justify-content-center align-items-center flex-column">
+		<div>
+			<div class="d-flex" style="gap: 10px;">
+				<div style="width: 500px;">
+					<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+						<div class="carousel-inner">
+							{% for index, photo in rent.residence.photos %}
+								<div class="carousel-item {% if index == 0 %}active{% endif %}">
+									<img style="aspect-ratio: 18/9; width: 100%; object-fit: cover;" src="/uploads/property/{{ photo }}">
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				<form>
+					<div>
+						<h1 id="name">{{ rent.residence.name }}</h1>
+						<span>Locataire: {{ rent.tenant.firstName }}  {{ rent.tenant.lastName }}</span><br>
+						<a href="/uploads/property/{{ rent.inventoryFile }}" download>Télécharger</a> le gabarit
+					</div>
+					<div>
+						<p>vous devez signé le gabarit</p>
+						<div class="d-flex justify-content-between">
+							<div style="width: 40%;">
+								<span>Votre prenom</span>
+								<div class="input-group mb-1">
+									<input type="text" class="form-control" placeholder="prenom" aria-label="first_name" name="first_name">
+								</div>
+							</div>
+							<div style="width: 40%;">
+								<span>Votre nom</span>
+								<div class="input-group mb-1">
+									<input type="text" class="form-control" placeholder="nom" aria-label="last_name" name="last_name">
+								</div>
+							</div>
+						</div>
+						<div>
+							<span>Commentaire</span>
+							<div class="input-group mb-1">
+								<textArea  type="text" class="form-control" placeholder="commentaire" aria-label="comment" name="comment" column="3"></textArea>
+							</div>
+						</div>
+					</div>
+					<button type="submit" class="btn btn-success">signée</button>
+				</form>
+			</div>
+		</div>
+		<div>
+			<h2 style="text-align: start;">Synthése</h2>
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="card text-white {% if 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') %}bg-success{% else %}bg-dark{% endif %} mb-3" style="max-width: 15%;">
+					<div class="card-header">Arrivée du locataire</div>
+					<div class="card-body">
+						<h5 class="card-title">Arrivée le {{ rent.arrivalDate|date('d/m/Y') }}</h5>
+						<p class="card-text">{% if 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') %}Le locataire est arrivé à la résidence.{% else %}Le locataire va arrivée à la résidence.{% endif %}</p>
+					</div>
+				</div>
+				<i class="fa-solid fa-angle-right fa-3x"></i>
+				<div class="card text-white {% if rent.firstSignature != null %}bg-success{% elseif 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') %}bg-warning{% else %}bg-dark{% endif %} mb-3" style="max-width: 15%;">
+					<div class="card-header">Signature de l’inventaire</div>
+					<div class="card-body">
+						<h5 class="card-title">{% if rent.firstSignature == null %}A signé le {% else %}Signée le{% endif %}{{ rent.firstValidateAt|date('d/m/Y') }}</h5>
+						<p class="card-text">par le locataire {% if rent.firstSignature != null %}<b>{% if rent.firstCommentaire %}avec un {% else %}sans {% endif %}commentaire</b>{% endif %}</p>
+					</div>
+				</div>
+				<i class="fa-solid fa-angle-right fa-3x"></i>
+				<div class="card text-white {% if rent.secondSignature != null %}bg-success{% elseif 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') and rent.firstSignature != null %}bg-warning{% else %}bg-dark{% endif %} mb-3" style="max-width: 15%;">
+					<div class="card-header">Signature de l’inventaire</div>
+					<div class="card-body">
+						<h5 class="card-title">{% if rent.secondSignature == null %}A signé le {% else %}Signée le{% endif %}{{ rent.secondValidateAt|date('d/m/Y') }}</h5>
+						<p class="card-text">par le mandataire {% if rent.secondSignature != null %}<b>{% if rent.secondCommentaire %}avec un {% else %}sans {% endif %}commentaire</b>{% endif %}</p>
+					</div>
+				</div>
+				<i class="fa-solid fa-angle-right fa-3x"></i>
+				<div class="card text-white {% if rent.thirdSignature != null %}bg-success{% elseif 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') and rent.secondSignature != null %}bg-warning{% else %}bg-dark{% endif %} mb-3" style="max-width: 15%;">
+					<div class="card-header">Signature fin état des lieux de l’inventaire</div>
+					<div class="card-body">
+						<h5 class="card-title">{% if rent.thirdSignature == null %}A signé le {% else %}Signée le{% endif %}{{ rent.thirdValidateAt|date('d/m/Y') }}</h5>
+						<p class="card-text">par le locataire {% if rent.thirdSignature != null %}<b>{% if rent.thirdCommentaire %}avec un {% else %}sans {% endif %}commentaire</b>{% endif %}</p>
+					</div>
+				</div>
+				<i class="fa-solid fa-angle-right fa-3x"></i>
+				<div class="card text-white {% if rent.fourthSignature != null %}bg-success{% elseif 'now'|date('d/m/Y') >= rent.arrivalDate|date('d/m/Y') and rent.thirdSignature != null %}bg-warning{% else %}bg-dark{% endif %} mb-3" style="max-width: 15%;">
+					<div class="card-header">Signature fin état des lieux de l’inventaire</div>
+					<div class="card-body">
+						<h5 class="card-title">{% if rent.fourthSignature == null %}A signé le {% else %}Signée le{% endif %}{{ rent.fourthValidateAt|date('d/m/Y') }}</h5>
+						<p class="card-text">par le mandataire {% if rent.fourthSignature != null %}<b>{% if rent.fourthCommentaire %}avec un {% else %}sans {% endif %}commentaire</b>{% endif %}</p>
+					</div>
+				</div>
+			</div>
+			<a class="btn btn-success" href="/property/{{ rent.residence.id }}">retour au bien</a>
+		</div>
+	</div>
+	{% include "global/footer.html.twig" %}
+{% endblock %}
+{# end body #}
+
+
+{# js #}
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script type="module" src="/rent/signup.js"></script>
+{% endblock %}
+{# end js #}
+

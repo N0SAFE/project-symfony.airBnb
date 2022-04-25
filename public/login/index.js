@@ -10,12 +10,12 @@ let errorMessageElement = document.getElementById("error-message")
 
 let form = document.querySelector("form");
 
-let FormManager = await scriptLoader.require({ module: "n0safe/manager/form", property: "default" })
+let FormManager = await scriptLoader.require({ module: "manager/form", property: "default" })
 
 let formManager = new FormManager(form, async function(property) {
-    let response = await ajax.get("login/process", "POST", { parse: "TEXT", data: property.value })
-    console.log(response)
-    if (response != "ko") {
+    let response = await ajax.get({ url: "login/process", method: "POST", parse: "TEXT", data: property.value })
+    console.log(response.ok())
+    if (response.ok()) {
         redirect("/")
     } else {
         let inner = errorMessageElement.innerHTML

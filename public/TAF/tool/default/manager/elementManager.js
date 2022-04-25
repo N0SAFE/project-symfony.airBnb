@@ -12,7 +12,20 @@ export function createElementFromHTML(htmlString) {
 }
 
 
-export function creator(obj = {}) {
+export function parse(HTMLElement) {
+    HTMLElement.child
+}
+
+
+export function creator(obj = {}, sortType) {
+    let ret = recursiveFunction(obj)
+    console.log(sortType)
+    if (sortType == "text")
+        return ret.outerHTML
+    return ret
+}
+
+function recursiveFunction(obj = {}) {
     // console.log(obj)
     if (!(typeof obj.tag === "string") && (obj.element != undefined && !(obj.element instanceof HTMLElement))) {
         return null;

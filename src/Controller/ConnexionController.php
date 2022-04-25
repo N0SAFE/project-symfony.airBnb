@@ -71,7 +71,7 @@ class ConnexionController extends AbstractController{
         }
 
         $userRepository->delete($user);
-        return $this->redirectToRoute("logout");
+        return new Response("ok");
     }
 
     public function registerIndex(){

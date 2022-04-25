@@ -6,6 +6,7 @@ import ajax from "../tool/default/ajax.js";
 import { ajaxLoad } from "../tool/default/ajax.js"
 import { addInObject, searchInObject } from "./global.js";
 import * as global from "./global.js"
+import HTTP from "../tool/default/manager/httpManager.js";
 
 window.TAF = new class TAF {}
 const addTAFVar = (array, value) => addInObject(TAF, array, value)
@@ -15,11 +16,13 @@ const multiCall = (func, array) => array.forEach((args) => func(...args))
  * @param {object} params <scriptLoader:Object<baseLocation:string>, requireScript:Array<string>, iniLoadScript:Array<string>>
  * @returns {object} <debugTool, devTool, modulesLoad, modulesLoadAssocName>
  */
-export default async function ini(params = { baseLocation: { ajax: "", script: "" }, requireScript: [], iniLoadScript: [], dev: false, tafDeep: "" }) {
+export default async function setBuild(params = { baseLocation: { ajax: "", script: "" }, requireScript: [], iniLoadScript: [], dev: false, tafDeep: "" }) {
 
+    // set the stack limit off the error handler to infinity
     Error.stackTraceLimit = Infinity
 
-    window.setBuild = ini
+    // set the setBuild into the global var
+    window.setBuild = setBuild
 
     let metaScript =
         import.meta.url
@@ -32,13 +35,12 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
     window.styleLoader = styleLoader
     window.srcLoader = srcLoader
     window.autoFunction = autoFunction
+    window.http = HTTP
 
     // set the TAF property of scriptLoader (getParams and PARAMS)
     scriptLoader.ini()
 
-    Object.entries(global).forEach(function([key, val]) {
-        addTAFVar([key], val)
-    })
+    Object.entries(global).forEach(([key, val]) => addTAFVar(["prefab", key], val))
 
     addTAFVar(["autoFunction"], autoFunction)
 
@@ -134,24 +136,23 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
     addTAFVar(["info", "projectBaseLocation"], TafProjectBaseLocation)
 
     // set json
-    let [json, local, src, require] = (await ajax.array.get(
-        [
-            TafLocation + "package.TAF.json",
-            "GET",
-            { parse: "JSON" }
-        ], [
-            TafLocation + "package.project.json",
-            "GET",
-            { parse: "JSON" }
-        ], [
-            TafLocation + "src.json",
-            "GET",
-            { parse: "JSON" }
-        ], [
-            TafLocation + "require.json",
-            "GET",
-            { parse: "JSON" }
-        ]))
+    let [json, local, src, require] = await ajax.array.get({
+        url: TafLocation + "package.TAF.json",
+        method: "GET",
+        parse: "JSON"
+    }, {
+        url: TafLocation + "package.project.json",
+        method: "GET",
+        parse: "JSON"
+    }, {
+        url: TafLocation + "src.json",
+        method: "GET",
+        parse: "JSON"
+    }, {
+        url: TafLocation + "require.json",
+        method: "GET",
+        parse: "JSON"
+    }).response()
 
     scriptLoader.parseJson(json, TAF.info.baseLocation + "tool/")
     scriptLoader.parseJson(local, TAF.info.projectBaseLocation, "LOCAL")
@@ -189,47 +190,24 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
                     }
                 }
             }
-        ],
-        [
-            ["module"], {
-                prefabObject: {
-                    Container: class Container {
-                        constructor(obj) {
-                            let parent = obj.parent
-                            let property = obj.property
-                            if (parent) {
-                                this.parent = parent
-                            } else {
-                                this.parent = this
-                            }
-                            Object.assign(this, property)
-                        }
-                        getParent() {
-                            return this.parent
-                        }
-                        getHighestParent() {
-                            if (this.parent === this) {
-                                return this
-                            }
-                            return this.parent.getHighestParent()
-                        }
-                    }
-                }
-            }
         ]
     ])
+
+    styleLoader.load('/global/style/style.css')
 
     // #endregion set global variable
 
     // #region scriptLoader
 
-    // ! prototype/modifier must be load in first and with scriptLoader.load and not .loads (tthe asyncForEach is used in scriptLoader.loads function)
-    await scriptLoader.array.load(["ajax"], ["loader/scriptLoader"], ["n0safe/manager/event"], ["n0safe/console/error"])
+    // ! prototype/modifier must be load in first and with scriptLoader.load and not .loads (the asyncForEach is used in scriptLoader.loads function)
+    await scriptLoader.array.load(["ajax"], ["loader/scriptLoader"], ["manager/event"], ["n0safe/console/error"], ["prototype/modifier"])
+    await scriptLoader.call({ module: "prototype/modifier", property: "default" }).ini()
     addTAFVar(["promise", "sodium"], scriptLoader.load("node_modules/sodium"))
-    addTAFVar(["module", "eventManager"], scriptLoader.call({ module: "n0safe/manager/event", property: "default" }))
+    addTAFVar(["promise", "prototypeModifier"], scriptLoader.require({ module: "prototype/modifier", property: "default" }))
+    addTAFVar(["module", "eventManager"], scriptLoader.call({ module: "manager/event", property: "default" }))
     addTAFVar(["module", "error"], scriptLoader.call({ module: "n0safe/console/error" }))
     addTAFVar(["module", "dev"], await scriptLoader.require({ module: "dev", property: "default" }))
-    let arrayStackFrame = TAF.searchInObject(TAF, ["module", "error", "ErrorStackParser"]).parse(new Error())
+    let arrayStackFrame = TAF.prefab.searchInObject(TAF, ["module", "error", "ErrorStackParser"]).parse(new Error())
     let StackFrame = arrayStackFrame[arrayStackFrame.length - 1]
     if (StackFrame.getFileName()) {
         StackFrame.setFileName(StackFrame.getFileName().substring(0, 5) == "async" ? StackFrame.getFileName().substring(5).trim() : StackFrame.getFileName())
@@ -242,6 +220,7 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
 
     // #region load module requested by user
 
+    // console.log(params)
     let modulesLoad = await scriptLoader.array.load(...[...params.requireScript.map(function(array) { return [array] }), ...TAF.json.loader.require.map(function(array) { return [array] })])
 
     // #endregion load module requested by user
@@ -256,3 +235,6 @@ export default async function ini(params = { baseLocation: { ajax: "", script: "
 
     // #endregion return
 }
+
+
+window.setBuild = setBuild

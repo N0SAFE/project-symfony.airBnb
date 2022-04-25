@@ -1,8 +1,12 @@
 import DbClass from "../index.js";
 
 let dbClass = new DbClass()
-let db = await ajax.get(dbClass.getPath(
-    import.meta.url) + "/db.json", "GET", { parse: "JSON" });
+let db = (await ajax.get({
+    url: dbClass.getPath(
+        import.meta.url) + "/db.json",
+    method: "GET",
+    parse: "JSON"
+})).response();
 
 export default new(class MimeType extends DbClass {
     constructor() {

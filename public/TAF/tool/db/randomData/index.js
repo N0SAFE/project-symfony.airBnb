@@ -9,8 +9,12 @@ export default new(class RandomData extends DbClass {
         super()
     }
     async get(toGet, template) {
-        return this["get" + capitalize(toGet)] ? await this["get" + capitalize(toGet)](template) : (!this.data[toGet] ? this.data[toGet] = await ajax.get(this.getPath(
-            import.meta.url) + "/" + toGet + ".json", "POST", { parse: "JSON" }) : this.data[toGet])
+        return this["get" + capitalize(toGet)] ? await this["get" + capitalize(toGet)](template) : (!this.data[toGet] ? this.data[toGet] = (await ajax.get({
+            url: this.getPath(
+                import.meta.url) + "/" + toGet + ".json",
+            method: "GET",
+            parse: "JSON"
+        })).response() : this.data[toGet])
     }
     async set(toSet, array) {
         return this.data[toSet] = array

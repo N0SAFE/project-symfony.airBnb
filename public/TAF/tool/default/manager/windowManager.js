@@ -1,13 +1,3 @@
-export default new(class WindowManager {
-    createChild(obj) {
-        return new ChildWindow(obj)
-    }
-
-    createParent() {
-        return new ParentWindow(...arguments)
-    }
-})
-
 class ChildWindow {
     opened
     onreceived = () => {}
@@ -84,3 +74,31 @@ class ParentWindow {
         return this.opener;
     }
 }
+
+export default new(class WindowManager {
+    createChild(obj) {
+        return new ChildWindow(obj)
+    }
+
+    createParent() {
+        return new ParentWindow(...arguments)
+    }
+
+    blankWindow = this.createChild({
+        windowName: "blankPage",
+        url: import.meta.url + "/../index.html"
+    })
+
+    blankCount = 0
+
+    blank(str) {
+        if (this.blankWindow.firstOpen || this.blankWindow.opened.closed) {
+            this.blankWindow.open()
+        }
+        setTimeout(function() {
+            str = "<h1 style='text-align: center;'>" + this.blankCount++ + "</h1>" + str
+            this.blankWindow.write(str)
+        }.bind(this), 20)
+
+    }
+})

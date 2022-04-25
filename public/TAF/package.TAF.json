@@ -38,7 +38,7 @@
                 "path": "./app.js",
                 "sort": "built-in-dev",
                 "require": [
-                    { "script": "n0safe/manager/window", "use": ["default"] },
+                    { "script": "manager/window", "use": ["default"] },
                     { "script": "dev/components", "use": ["default"] },
                     { "script": "dev/onrequestreceive", "use": ["default"] }
                 ],
@@ -55,7 +55,7 @@
             "components": {
                 "path": "./components.js",
                 "sort": "built-in-dev",
-                "require": [{ "script": "n0safe/manager/element", "use": ["creator"] }]
+                "require": [{ "script": "manager/element", "use": ["creator"] }]
             }
         },
         "ajax": {
@@ -75,21 +75,20 @@
             }
         },
         "function": {
-            "__repo__": {
-                "path": "./function.js",
+            "__global__": {
                 "sort": "built-in-func"
             },
-            "$_get": {
-                "path": "./$_GET.js",
-                "sort": "built-in-func"
+            "__repo__": {
+                "path": "./function.js"
             },
             "Timer": {
-                "path": "./Timer.js",
-                "sort": "built-in-func"
+                "path": "./Timer.js"
             },
             "async": {
-                "path": "./async.js",
-                "sort": "built-in-func"
+                "path": "./async.js"
+            },
+            "parser": {
+                "path": "./parser.js"
             }
         },
         "objFunction": {
@@ -117,57 +116,60 @@
             }
         },
         "prototype": {
+            "__global__": {
+                "sort": "built-in-prototype"
+            },
             "modifier": {
                 "path": [1, "./prototype.modifier.js"],
                 "sort": "built-in-prototype",
                 "require": [{ "script": "/global/association/string-class.js", "use": ["default"] }]
             },
-            "array": {
+            "Array": {
                 "path": "./prototypeArray.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Array" }
             },
-            "object": {
+            "Object": {
                 "path": "./prototypeObject.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Object" }
             },
-            "string": {
+            "String": {
                 "path": "./prototypeString.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "String" }
             },
-            "number": {
+            "Number": {
                 "path": "./prototypeNumber.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Number" }
             },
-            "bool": {
+            "Bool": {
                 "path": "./prototypeBool.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Boolean" }
             },
-            "date": {
+            "Date": {
                 "path": "./prototypeDate.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Date" }
             },
-            "regExp": {
+            "RegExp": {
                 "path": "./prototypeRegExp.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "RegExp" }
             },
-            "function": {
+            "Function": {
                 "path": "./prototypeFunction.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Function" }
             },
-            "window": {
+            "Window": {
                 "path": "./prototypeWindow.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Window" }
             },
-            "document": {
+            "Document": {
                 "path": "./prototypeDocument.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "HTMLDocument" }
@@ -182,10 +184,14 @@
                 "sort": "built-in-prototype",
                 "params": { "object": "HTMLCollection" }
             },
-            "symbol": {
+            "Symbol": {
                 "path": "./prototypeSymbol.js",
                 "sort": "built-in-prototype",
                 "params": { "object": "Symbol" }
+            },
+            "Promise": {
+                "path": "./prototypePromise.js",
+                "params": { "object": "Promise" }
             }
         },
         "verification": {
@@ -201,12 +207,6 @@
                 "path": "./typeVerification.js",
                 "sort": "built-in-regex"
             }
-        }
-    },
-    "n0safe": {
-        "compiler/css": {
-            "path": "./compiler/cssCompiler.js",
-            "sort": "n0safe-compiler"
         },
         "manager": {
             "__global__": {
@@ -230,7 +230,7 @@
                 "styles": ["manager/css/hierarchyManager.css", "|default.css"],
                 "src": "font-awesome~~6.0.0-beta3~~all~~css",
                 "require": [
-                    { "script": "n0safe/manager/element", "use": "creator" },
+                    { "script": "manager/element", "use": "creator" },
                     { "script": "prototype/string", "use": "capitalize" }
                 ]
             },
@@ -241,7 +241,7 @@
                 "path": "./popUpManager.js",
                 "styles": ["manager/css/popUpManager.css", "|default.css"],
                 "require": [
-                    { "script": "n0safe/manager/element", "use": "creator" }
+                    { "script": "manager/element", "use": "creator" }
                 ]
             },
             "window": {
@@ -249,14 +249,30 @@
             },
             "video": {
                 "path": "./videoManager.js",
-                "require": [{ "script": "n0safe/manager/element", "use": ["creator"] }]
+                "require": [{ "script": "manager/element", "use": ["creator"] }]
             },
             "event": {
                 "path": "./eventManager.js",
-                "sort": "built-in-loader"
+                "sort": "built-in-event"
+            },
+            "HMI": {
+                "path": "./hmiManager.js",
+                "prototype": ["Array::[removeItemAll, pushOnce, has, findBy]"]
+            },
+            "http": {
+                "path": "./httpManager.js"
+            },
+            "object": {
+                "path": "./objectManager.js"
             }
+        }
+    },
+    "n0safe": {
+        "compiler/css": {
+            "path": "./compiler/cssCompiler.js",
+            "sort": "n0safe-compiler"
         },
-        "url/parser": {
+        "urlParser": {
             "path": "./url/UrlParamParser.js",
             "sort": "n0safe-url"
         },
@@ -334,7 +350,7 @@
     },
     "node_modules": {
         "__global__": {
-
+            "sort": "node_modules"
         },
         "gsap": {
             "path": "./gsap.js",
@@ -391,6 +407,12 @@
         "sodium": {
             "path": "./sodium.js",
             "sort": "node_modules"
+        },
+        "deep-equal": {
+            "path": "./deep-equal.js"
+        },
+        "faker": {
+            "path": "./faker.js"
         }
     }
 }

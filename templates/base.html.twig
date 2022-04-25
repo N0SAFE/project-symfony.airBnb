@@ -12,10 +12,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script type="module">
-			import ini from "/TAF/ini/ini.js";
-			window.setBuild = ini;
-		</script>
+		<script type="module" src="/TAF/ini/ini.js"></script>
 		{% block head %}
 			{% if noCache is defined %}
 				{% include 'eraseCache.html.twig' %}

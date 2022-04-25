@@ -33,36 +33,6 @@ class Rent
     private $departure_date;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $tenant_comments;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $tenant_signature;
-
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $tenant_validated_at;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $representative_comments;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $representative_signature;
-
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $representative_validated_at;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="rents")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -77,7 +47,67 @@ class Rent
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="managedRents")
      */
-    private $owner;
+    private $representative;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $first_comment;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $first_signature;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $first_validate_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $second_comment;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $second_signature;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $second_validate_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $third_comment;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $third_signature;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $third_validate_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fourth_comment;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fourth_signature;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $fourth_validate_at;
 
     public function getId(): ?int
     {
@@ -120,78 +150,6 @@ class Rent
         return $this;
     }
 
-    public function getTenantComments(): ?string
-    {
-        return $this->tenant_comments;
-    }
-
-    public function setTenantComments(string $tenant_comments): self
-    {
-        $this->tenant_comments = $tenant_comments;
-
-        return $this;
-    }
-
-    public function getTenantSignature(): ?string
-    {
-        return $this->tenant_signature;
-    }
-
-    public function setTenantSignature(string $tenant_signature): self
-    {
-        $this->tenant_signature = $tenant_signature;
-
-        return $this;
-    }
-
-    public function getTenantValidatedAt(): ?\DateTimeImmutable
-    {
-        return $this->tenant_validated_at;
-    }
-
-    public function setTenantValidatedAt(\DateTimeImmutable $tenant_validated_at): self
-    {
-        $this->tenant_validated_at = $tenant_validated_at;
-
-        return $this;
-    }
-
-    public function getRepresentativeComments(): ?string
-    {
-        return $this->representative_comments;
-    }
-
-    public function setRepresentativeComments(string $representative_comments): self
-    {
-        $this->representative_comments = $representative_comments;
-
-        return $this;
-    }
-
-    public function getRepresentativeSignature(): ?string
-    {
-        return $this->representative_signature;
-    }
-
-    public function setRepresentativeSignature(string $representative_signature): self
-    {
-        $this->representative_signature = $representative_signature;
-
-        return $this;
-    }
-
-    public function getRepresentativeValidatedAt(): ?\DateTimeImmutable
-    {
-        return $this->representative_validated_at;
-    }
-
-    public function setRepresentativeValidatedAt(\DateTimeImmutable $representative_validated_at): self
-    {
-        $this->representative_validated_at = $representative_validated_at;
-
-        return $this;
-    }
-
     public function getTenant(): ?User
     {
         return $this->tenant;
@@ -216,14 +174,158 @@ class Rent
         return $this;
     }
 
-    public function getOwner(): ?User
+    public function getRepresentative(): ?User
     {
-        return $this->owner;
+        return $this->representative;
     }
 
-    public function setOwner(?User $owner): self
+    public function setRepresentative(?User $representative): self
     {
-        $this->owner = $owner;
+        $this->representative = $representative;
+
+        return $this;
+    }
+
+    public function getFirstComment(): ?string
+    {
+        return $this->first_comment;
+    }
+
+    public function setFirstComment(?string $first_comment): self
+    {
+        $this->first_comment = $first_comment;
+
+        return $this;
+    }
+
+    public function getFirstSignature(): ?string
+    {
+        return $this->first_signature;
+    }
+
+    public function setFirstSignature(?string $first_signature): self
+    {
+        $this->first_signature = $first_signature;
+
+        return $this;
+    }
+
+    public function getFirstValidateAt(): ?\DateTimeImmutable
+    {
+        return $this->first_validate_at;
+    }
+
+    public function setFirstValidateAt(?\DateTimeImmutable $first_validate_at): self
+    {
+        $this->first_validate_at = $first_validate_at;
+
+        return $this;
+    }
+
+    public function getSecondComment(): ?string
+    {
+        return $this->second_comment;
+    }
+
+    public function setSecondComment(?string $second_comment): self
+    {
+        $this->second_comment = $second_comment;
+
+        return $this;
+    }
+
+    public function getSecondSignature(): ?string
+    {
+        return $this->second_signature;
+    }
+
+    public function setSecondSignature(?string $second_signature): self
+    {
+        $this->second_signature = $second_signature;
+
+        return $this;
+    }
+
+    public function getSecondValidateAt(): ?\DateTimeImmutable
+    {
+        return $this->second_validate_at;
+    }
+
+    public function setSecondValidateAt(?\DateTimeImmutable $second_validate_at): self
+    {
+        $this->second_validate_at = $second_validate_at;
+
+        return $this;
+    }
+
+    public function getThirdComment(): ?string
+    {
+        return $this->third_comment;
+    }
+
+    public function setThirdComment(?string $third_comment): self
+    {
+        $this->third_comment = $third_comment;
+
+        return $this;
+    }
+
+    public function getThirdSignature(): ?string
+    {
+        return $this->third_signature;
+    }
+
+    public function setThirdSignature(?string $third_signature): self
+    {
+        $this->third_signature = $third_signature;
+
+        return $this;
+    }
+
+    public function getThirdValidateAt(): ?\DateTimeImmutable
+    {
+        return $this->third_validate_at;
+    }
+
+    public function setThirdValidateAt(?\DateTimeImmutable $third_validate_at): self
+    {
+        $this->third_validate_at = $third_validate_at;
+
+        return $this;
+    }
+
+    public function getFourthComment(): ?string
+    {
+        return $this->fourth_comment;
+    }
+
+    public function setFourthComment(?string $fourth_comment): self
+    {
+        $this->fourth_comment = $fourth_comment;
+
+        return $this;
+    }
+
+    public function getFourthSignature(): ?string
+    {
+        return $this->fourth_signature;
+    }
+
+    public function setFourthSignature(?string $fourth_signature): self
+    {
+        $this->fourth_signature = $fourth_signature;
+
+        return $this;
+    }
+
+    public function getFourthValidateAt(): ?\DateTimeImmutable
+    {
+        return $this->fourth_validate_at;
+    }
+
+    public function setFourthValidateAt(?\DateTimeImmutable $fourth_validate_at): self
+    {
+        $this->fourth_validate_at = $fourth_validate_at;
 
         return $this;
     }

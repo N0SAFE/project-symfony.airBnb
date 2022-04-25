@@ -55,7 +55,7 @@
 						<div class="input-group mb-1">
 							<select multiple name="managedRent[]">
 								{% for residence in residences %}
-									<option value="{{ residence.val.id }}" {% if residence.selected %}selected{% endif %}>{{residence.val.name}} - {{residence.val.country}} ({{residence.val.zipCode}})</option>
+									<option value="{{ residence.id }}" {% if residence in residencesSelected %}selected{% endif %}>{{residence.name}} - {{residence.country}} ({{residence.zipCode}})</option>
 								{% endfor %}
 							</select>
 						</div>

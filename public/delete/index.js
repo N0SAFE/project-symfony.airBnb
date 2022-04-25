@@ -8,9 +8,10 @@ let deleteButton = document.getElementById("delete-button")
 let errorText = document.getElementById("error-text")
 
 deleteButton.onclick = async function() {
-    let response = await ajax.get("delete/proccess", "POST", { parse: "TEXT" })
-    console.log(response)
-    if (response != "ko") {
+    let ajaxResponse = await ajax.get({ url: "delete/process", method: "POST", parse: "TEXT" })
+    console.log(ajaxResponse.response())
+    console.log(ajaxResponse.status())
+    if (ajaxResponse.ok()) {
         redirect("/")
     } else {
         let inner = errorText.innerHTML

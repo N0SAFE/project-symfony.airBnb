@@ -56,29 +56,23 @@ class Residence
     private $owner;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
-     */
-    private $representative;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="residence_id")
+     * @ORM\OneToMany(targetEntity=Rent::class, mappedBy="residence")
      */
     private $rents;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="array")
      */
-    private $photo_file;
+    private $photos = [];
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="residences")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="residences")
      */
-    private $users;
+    private $representative;
 
     public function __construct()
     {
         $this->rents = new ArrayCollection();
-        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,18 +164,6 @@ class Residence
         return $this;
     }
 
-    public function getRepresentative(): ?User
-    {
-        return $this->representative;
-    }
-
-    public function setRepresentative(?User $representative): self
-    {
-        $this->representative = $representative;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Rent[]
      */
@@ -212,41 +194,26 @@ class Residence
         return $this;
     }
 
-    public function getPhotoFile(): ?string
+    public function getPhotos(): ?array
     {
-        return $this->photo_file;
+        return $this->photos;
     }
 
-    public function setPhotoFile(string $photo_file): self
+    public function setPhotos(array $photos): self
     {
-        $this->photo_file = $photo_file;
+        $this->photos = $photos;
 
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
+    public function getRepresentative(): ?User
     {
-        return $this->users;
+        return $this->representative;
     }
 
-    public function addUser(User $user): self
+    public function setRepresentative(?User $representative): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addResidence($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeResidence($this);
-        }
+        $this->representative = $representative;
 
         return $this;
     }

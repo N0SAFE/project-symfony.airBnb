@@ -450,8 +450,13 @@ export function setDefault(attributeName, defaultValue, verifFunction = undefine
     }
 }
 
-
-export const isClass = (v) => {
+/**
+ * If the function throws an error when called, and the error message starts with "Class constructor",
+ * then it's a class
+ * @param v - The value to check.
+ * @returns A function that returns a boolean.
+ */
+export function isClass(v) {
     return typeof v === 'function' && v.prototype.constructor === v;
 }
 

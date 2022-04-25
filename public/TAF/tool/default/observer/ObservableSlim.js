@@ -11,7 +11,7 @@
  *	reflecting changes in the model to the view. Observable Slim aspires to be as lightweight and easily
  *	understood as possible. Minifies down to roughly 3000 characters.
  */
-var ObservableSlim = (function() {
+export default (function() {
     var paths = [];
     // An array that stores all of the observables created through the public create() method below.
     var observables = [];
@@ -706,6 +706,3 @@ var ObservableSlim = (function() {
         }
     };
 })();
-
-// Export in a try catch to prevent this from erroring out on older browsers
-try { module.exports = ObservableSlim; } catch (err) {};

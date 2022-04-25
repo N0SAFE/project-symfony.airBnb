@@ -68,17 +68,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $managedRents;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Residence::class, inversedBy="users")
+     * @ORM\OneToMany(targetEntity=Residence::class, mappedBy="representative")
      */
     private $residences;
 
     public function __construct() 
     {
         $this->rents = new ArrayCollection();
-        $this->residences = new ArrayCollection();
         $this->propertyManagement = new ArrayCollection();
         $this->residenceAssociations = new ArrayCollection();
         $this->other = new ArrayCollection();
+        $this->residences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -271,6 +271,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->residences->contains($residence)) {
             $this->residences[] = $residence;
+            $residence->setRepresentative($this);
         }
 
         return $this;
@@ -278,7 +279,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeResidence(Residence $residence): self
     {
-        $this->residences->removeElement($residence);
+        if ($this->residences->removeElement($residence)) {
+            // set the owning side to null (unless already changed)
+            if ($residence->getRepresentative() === $this) {
+                $residence->setRepresentative(null);
+            }
+        }
 
         return $this;
     }

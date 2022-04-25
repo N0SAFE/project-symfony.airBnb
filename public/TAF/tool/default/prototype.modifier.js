@@ -2,7 +2,11 @@ const PARAMS = TAF.getParams(
     import.meta.url
 );
 
-export default new(class ModifiedPrototype {
+export const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export default new(class PrototypeModifier {
     // contain all association between fileName and associate object
     // example : association{"prototype/array": Array}
     association = {}
@@ -12,39 +16,55 @@ export default new(class ModifiedPrototype {
     constructor() {
         this.prototype = {}
         this.setAssociations()
+    }
+
+    async ini() {
         this.add(Array, "asyncForEach", asyncForEach)
+        await this.addFromPrototypeModules(
+            ['Promise', 'THEN', "then"], ['Promise', 'CATCH', "catch"], /** ['Promise', 'SUCESS', "sucess"], ['Promise', 'ERROR', "error"] */ )
     }
 
     add(object, propertyName, value, moduleNameForConflict = "") {
-
         moduleNameForConflict = moduleNameForConflict != "" ? "[" + moduleNameForConflict + "]" : ""
-        this.createNewBibl(Object.prototype.toString.call(object()))
+        this.createNewBibl(object.name)
         object.prototype[propertyName] = value
 
-        if (this.prototype[Object.prototype.toString.call(object()) + moduleNameForConflict] == undefined) {
-            this.prototype[Object.prototype.toString.call(object()) + moduleNameForConflict] = { "class": object, "property": [] }
+        if (this.prototype[object.name + moduleNameForConflict] == undefined) {
+            this.prototype[object.name + moduleNameForConflict] = { "class": object, "property": [] }
         }
 
-        this.prototype[Object.prototype.toString.call(object()) + moduleNameForConflict].property.push(value)
+        this.prototype[object.name + moduleNameForConflict].property.push(value)
 
     }
 
-    async addFromFiles(...array) {
+    async addFromPrototypeModules(...array) {
         return await Promise.all(array.map(async function([fileName, funcName, name]) {
-            return this.loadPrototypeFromFile(fileName, funcName, name)
+            return await this.addFromPrototypeModule(fileName, funcName, name)
         }, this))
     }
 
-    async addFromFile(fileName, funcName, name = undefined) {
+    async addFromPrototypeModule(fileName, property, name = undefined) {
         if (scriptLoader == undefined) {
             throw new Error("to use the function loadPrototypeFromFile, you must ini the built-in package")
         }
-        if (scriptLoader.call(fileName) == false) {
-            await scriptLoader.load(fileName)
+        fileName = capitalize(fileName)
+            // console.log(scriptLoader.call(fileName, funcName))
+        this.add(this.association[fileName], name ? name : (Array.isArray(property) ? property.join("_") : property), await scriptLoader.require({ module: "prototype/" + fileName, property }))
+    }
+
+    async addFromModules(...array) {
+        return await Promise.all(array.map(async function([object, module, property, name]) {
+            return this.addFromModule(object, module, property, name)
+        }, this))
+    }
+
+    async addFromModule(object, module, property, name) {
+        if (scriptLoader == undefined) {
+            throw new Error("to use the function loadPrototypeFromFile, you must ini the built-in package")
         }
-        // console.log(scriptLoader.call(fileName, funcName))
-        this.add(this.association[fileName], name ? name : funcName, scriptLoader.call(fileName)[funcName])
-        return this.association[fileName].prototype;
+
+        this.add(object, name ? name : funcName, await scriptLoader.require({ module, property }))
+        return object.prototype;
     }
 
     getPersonnalizedProperty(object, propertyName = null) {

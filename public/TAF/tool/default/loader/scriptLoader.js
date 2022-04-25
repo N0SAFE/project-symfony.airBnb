@@ -1,91 +1,8 @@
+import { StackContainer, Container } from "../../../ini/global.js"
 import { importScript, isValidURL, dirname, isClass } from "../function/function.js"
+
 // util
 // this class is used to load the script in the order (no load override another for the window.PARAMS)
-
-
-/**
- * Container is a class that can be used to create a hierarchical structure of objects. 
- */
-class Container {
-    /**
-     * @param parent - The parent object. If you don't specify a parent, the object will be a root
-     * object.
-     * @param [params] - A dictionary of parameters that are passed to the constructor.
-     */
-    constructor(parent, params = {}) {
-        if (parent) {
-            this.__parent = parent
-        } else {
-            this.__parent = this
-        }
-        this.__innerVar = {
-            id: params.id
-        }
-    }
-
-    /**
-     * Get the parent of the current object
-     * @returns The parent of the current object.
-     */
-    __getParent() {
-        return this.__parent
-    }
-
-    /**
-     * Given an id, return the parent of the element with that id
-     * @param id - The id of the parent you want to find.
-     * @returns The parent with the specified id.
-     */
-    __getParentById(id) {
-        return this.__innerVar.id == id ? this : (this.__isHighestParent() ? undefined : this.__getParent().__getParentById(id))
-    }
-
-    /**
-     * Returns true if the current object is the highest parent in the hierarchy
-     * @returns The __isHighestParent() method returns a boolean value.
-     */
-    __isHighestParent() {
-        if (this.__getParent() === this) {
-            return true
-        }
-        return false
-    }
-
-    /**
-     * Returns the highest parent of the current element
-     * @returns The highest parent of the current object.
-     */
-    __getHighestParent() {
-        if (this.__isHighestParent()) {
-            return this
-        }
-        if (this.__getParent() instanceof Container)
-            return this.__getParent().__getHighestParent()
-        else
-            return this.__getParent()
-    }
-}
-
-
-let totalid = 0
-
-class StackContainer {
-    /* Parsing the error stack and avoiding the file that is importing the error stack. */
-    stack = TAF.module.error.ErrorStackParser.parseWithAvoid([{
-        fileName: import.meta.url
-    }], new Error())
-
-    /* Creating a function that returns the last element of the array stack trace. */
-    getLast = function() {
-        return this.stack[0]
-    }
-
-    /* Creating a function that returns the stack trace of the error. */
-    getStack = function() {
-        return this.stack
-    }
-}
-
 
 export default new(class ScriptLoader {
 
@@ -470,7 +387,14 @@ export default new(class ScriptLoader {
                 throw new Error("the load function would have 1 arguments of type string|Object but " + typeof arguments[0] + " is givent")
             }
 
-            obj.module = obj.module.replace("\\", "/")
+            try {
+                obj.module = obj.module.replace("\\", "/")
+            } catch (e) {
+                console.error(e);
+                console.log(obj);
+                console.log(arguments[0])
+            }
+
             if (!obj.name)
                 obj.name = obj.module
             obj.params = {}
@@ -525,7 +449,7 @@ export default new(class ScriptLoader {
             await this.customProcessFunction({...packageObj }, "load", "try", { promise: Try })
 
             let firstFileLocation
-            if (firstFileLocation = TAF.searchInObject(TAF, ["info", "firstFileLocation"]))
+            if (firstFileLocation = TAF.prefab.searchInObject(TAF, ["info", "firstFileLocation"]))
                 if (firstFileLocation == obj.url) {
                     reject({ reason: "can't load the base file", packageObj })
                     throw new Error("can't load the base file")
@@ -538,10 +462,16 @@ export default new(class ScriptLoader {
 
                 obj.style = Array.isArray(obj.style) ? obj.style : []
                 obj.src = Array.isArray(obj.src) ? obj.src : []
+                obj.prototype = Array.isArray(obj.prototype) ? obj.prototype : []
 
 
                 obj.style.forEach(async style => styleLoader.load(style))
                 obj.src.forEach(async src => srcLoader.load(src))
+
+
+                await Promise.all(obj.prototype.map(await async function(prototype) {
+                    return await this.LOAD.function.prototypeFunction(prototype)
+                }, this))
 
                 this.LOAD.function.addRequireModuleToWindowParams(obj)
 
@@ -554,7 +484,7 @@ export default new(class ScriptLoader {
 
                 obj.module = {...all.script, ...all.module }
 
-                if (TAF.searchInObject(TAF, ["module", "error"]))
+                if (TAF.prefab.searchInObject(TAF, ["module", "error"]))
                     obj.loadBy = new StackContainer
 
                 this.property.addLoaded(obj)
@@ -585,6 +515,21 @@ export default new(class ScriptLoader {
                     args: {...obj },
                     require: {...obj.require }
                 }
+            }
+
+            prototypeFunction = async(
+                prototype
+            ) => {
+                let prototypeModifier = await TAF.promise.prototypeModifier
+                let [module, property] = prototype.split("::")
+                if (property.substring(0, 1) == "[" && property.substring(property.length - 1) == "]") {
+                    await Promise.all(property.substring(1, property.length - 1).split(",").map(await async function(funcName) {
+                        return await prototypeModifier.addFromPrototypeModule(module.trim(), funcName.trim())
+                    }))
+                    return
+                }
+                await prototypeModifier.addFromPrototypeModule(module.trim(), property.trim())
+                return
             }
 
             requireFunction = async(
@@ -745,13 +690,15 @@ export default new(class ScriptLoader {
 
             } else {
 
-                loaded = this.property.loaded.findBy(module, "name")
+                loaded = this.property.loaded.findBy(module.toLowerCase(), "name")
 
             }
 
-            if (!loaded)
+            if (!loaded) {
+
                 throw new Error("the module [" + module + "] is not loaded")
 
+            }
 
             let ret
             if (propertyCalled) {
@@ -807,7 +754,7 @@ export default new(class ScriptLoader {
                 }()
             }
 
-            if (TAF.searchInObject(TAF, ["module", "error"]))
+            if (TAF.prefab.searchInObject(TAF, ["module", "error"]))
                 loaded.callBy.push(new StackContainer)
 
             // this.customProcessFunction({...loaded }, "call", "success", loaded.module)

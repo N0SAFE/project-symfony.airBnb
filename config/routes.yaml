@@ -47,13 +47,13 @@ delete:
     controller: App\Controller\ConnexionController::delete
 
 delete_process:
-    path: /delete/proccess
+    path: /delete/process
     methods: [ "POST" , "GET" ]
     controller: App\Controller\ConnexionController::deleteProccess
 
 
 
-# tempController
+# ! tempController
 getHashedPassword:
     path: /get/password
     methods: ["GET"]
@@ -69,7 +69,7 @@ property_list:
 see_property:
     path: /property/{id}
     methods: ["GET"]
-    controller: App\Controller\PropertyController::see
+    controller: App\Controller\PropertyController::modify
     requirements:
         id: '\d+'
 
@@ -118,29 +118,69 @@ add_representative_process:
     controller: App\Controller\RepresentativeController::addProcess
 
 
-rent_list:
-    path: /rent
-    methods: [ "GET" ]
-    controller: App\Controller\RentController::list
 
-modify_rent:
-    path: /rent/modify/{id}
+tenant_list:
+    path: /tenant
     methods: [ "GET" ]
-    controller: App\Controller\RentController::modify
+    controller: App\Controller\TenantController::list
+
+modify_tenant:
+    path: /tenant/modify/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\TenantController::modify
     requirements:
         id: '\d+'
 
-modify_rent_process:
-    path: /rent/modify/process
+modify_tenant_process:
+    path: /tenant/modify/process
     methods: [ "POST" ]
-    controller: App\Controller\RentController::modifyProcess
+    controller: App\Controller\TenantController::modifyProcess
 
-add_rent:
-    path: /rent/add
+add_tenant:
+    path: /tenant/add
     methods: [ "GET" ]
-    controller: App\Controller\RentController::add
+    controller: App\Controller\TenantController::add
+
+add_tenant_process:
+    path: /tenant/add/process
+    methods: [ "POST" ]
+    controller: App\Controller\TenantController::addProcess
+
+
+
+see_rent:
+    path: /rent/see/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::index
+    requirements:
+        id: '\d+'
+
+list_rent:
+    path: /rent/list
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::list
+
+add_rent_from_tenant: 
+    path: /rent/add/tenant/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::addFromTenant
+    requirements:
+        id: '\d+'
+
+
+add_rent_from_property: 
+    path: /rent/add/property/{id}
+    methods: [ "GET" ]
+    controller: App\Controller\RentController::addFromProperty
+    requirements:
+        id: '\d+'
 
 add_rent_process:
     path: /rent/add/process
     methods: [ "POST" ]
     controller: App\Controller\RentController::addProcess
+
+rent_signup_process:
+    path: /rent/signup/process
+    mathods: [ "POST" ]
+    controller: App\Controller\RentController::signupProcess
